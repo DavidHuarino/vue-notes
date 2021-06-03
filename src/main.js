@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import '@/assets/css/tailwind.css'
 Vue.config.productionTip = false
+import {db} from "./firebase";
+console.log(db);
 
 new Vue({
   router,
