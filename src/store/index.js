@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    user: null
+    user: null,
   },
   mutations: {
     SET_USER(state, user) {
@@ -25,6 +25,23 @@ const store = new Vuex.Store({
       });
       commit('SET_USER', user);
     },
+    async doLogOut({commit}) {
+      await auth.signOut();
+      commit('SET_USER', null);
+    },
+    async getCurrentUser() {
+      return new Promise((resolve, reject) => {
+        const unsubscribe = auth.onAuthStateChanged(
+          user => {
+            unsubscribe();
+            resolve(user);
+          },
+          () => {
+            reject();
+          }
+        );
+      });
+    },
     checkAuth({commit}) {
       auth.onAuthStateChanged(user => {
           if(user) {
@@ -35,8 +52,13 @@ const store = new Vuex.Store({
       });
     }
   },
+  getters: {
+    getUser(state) {
+      return state.user;
+    }
+  },
   modules: {
   }
-})
-export default store;
+});
 store.dispatch('checkAuth');
+export default store;
