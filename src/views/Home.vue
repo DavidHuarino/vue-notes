@@ -4,19 +4,26 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>-->
-  <div class="text-center my-6">
-    <button class="p-3 bg-blue-600 text-white" @click="logOut()">Log Out</button>
-    <p>Bienvenido {{currentUser.displayName}}</p>
+  <div class="w-full min-h-screen px-5 bg-blue-300 text-center">
+    <!--
+    <button class="p-3 bg-blue-600 text-white" @click="logOut()">Log Out</button>-->
+    <h1 class="text-2xl p-3">Notes</h1>
+    <SearchNote/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
+import SearchNote from '@/components/SearchNote.vue'
 export default {
   name: 'Home',
+  components: {
+    SearchNote
+  },
   data() {
     return {
+
     }
   },
   methods: {
