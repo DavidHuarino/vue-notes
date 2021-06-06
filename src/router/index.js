@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register'
+import Create from '../views/Create'
 import store from '../store/index'
 //import {auth} from '../firebase'
 Vue.use(VueRouter)
@@ -23,6 +24,12 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/create',
+    name: 'createNote',
+    component: Create,
+    meta: {requiresAuth: true}
   },
   {
     path: '/about',

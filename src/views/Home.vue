@@ -4,11 +4,14 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>-->
-  <div class="w-full min-h-screen px-5 bg-blue-300 text-center">
+  <div class="w-full min-h-screen px-5 bg-gray-300 text-center">
     <!--
     <button class="p-3 bg-blue-600 text-white" @click="logOut()">Log Out</button>-->
     <h1 class="text-2xl p-3">Notes</h1>
     <SearchNote/>
+    <!--
+    <a class="fixed bottom-5 right-5 bg-blue-400 w-14 h-14 rounded-full"></a>-->
+    <router-link class="fixed bottom-5 right-5 bg-blue-400 w-14 h-14 rounded-full" :to="{name: 'createNote'}"><font-awesome-icon class="mt-4 text-2xl text-white" :icon="['fas', 'plus']"/></router-link>
   </div>
 </template>
 
