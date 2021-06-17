@@ -9,11 +9,11 @@
                 <form @submit.prevent="doRegister()" class="space-y-7">
                     <div class="flex items-center">
                         <span class="p-2 bg-white"><font-awesome-icon :icon="['fas', 'user']"/></span>
-                        <input type="email" v-model="user.username" class="w-full p-2 rounded bg-white border border-transparent focus:outline-none" placeholder="Username">
+                        <input type="text" v-model="user.username" class="w-full p-2 rounded bg-white border border-transparent focus:outline-none" placeholder="Username">
                     </div>
                     <div class="flex items-center">
                         <span class="p-2 bg-white"><font-awesome-icon :icon="['fas', 'envelope']"/></span>
-                        <input type="password" v-model="user.email" class="w-full p-2 rounded bg-white border border-transparent focus:outline-none" placeholder="Email">
+                        <input type="email" v-model="user.email" class="w-full p-2 rounded bg-white border border-transparent focus:outline-none" placeholder="Email">
                     </div>
                     <div class="flex items-center">
                         <span class="p-2 bg-white"><font-awesome-icon :icon="['fas', 'lock']"/></span>

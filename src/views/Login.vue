@@ -53,10 +53,5 @@ export default {
             }
         }
     },
-    getters: {
-        lista() {
-            return this.$store.getters.getUser;
-        }
-    }
 }
 </script>
