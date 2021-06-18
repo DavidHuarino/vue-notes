@@ -12,45 +12,40 @@ const store = new Vuex.Store({
     SET_USER(state, user) {
       state.user = user;
     },
-    SET_NOTE(state, notes) {
+    SET_NOTES(state, notes) {
       state.notes = notes;
+    },
+    REMOVE_NOTE(state, index) {
+      state.notes.splice(index, 1);
     }
   },
   actions: {
     // firebase
+    async removeNote({commit, getters}, id) {
+      await db.collection('notes').doc(id).delete();
+      let index = getters.getIndexNote(id);
+      commit('REMOVE_NOTE', index);
+    },
     async getNotesById({commit}) {
+      const user = auth.currentUser;
       let notes = [];
-      db.collection('notes').onSnapshot(snap => {
-        snap.forEach(doc => {
-          console.log(doc.id, "waaa")
-          console.log(doc.data(), "gaaa")
-          let newNote = doc.data();
-          newNote.id = doc.id;
-          notes.push(newNote);
-        });
+      const query = await db.collection('notes').where('userId', '==', user.uid).orderBy('createdAt', 'desc').get();
+      query.forEach(doc => {
+        let newNote = doc.data();
+        newNote.noteId = doc.id;
+        notes.push(newNote);
       });
-      commit('SET_NOTE', notes);
-      /*const user = auth.currentUser;
-      db.collection(`users/${user.uid}/notesId`).onSnapshot(querySnapShot => {
-        querySnapShot.forEach(async doc => {
-          //console.log(doc.data(), "aloja")
-          let note = await db.doc(`notes/${doc.data().id}`).get();
-          let newNote = note.data();
-          newNote.id = note.id;
-          notes.push(newNote);
-        });
-        commit('SET_NOTE', notes);
-      });*/
+      commit('SET_NOTES', notes);
     },
     async addNoteToFirebase(_, {title, content}) {
-      const newNote = await db.collection('notes').add({ title, content });
       const user = auth.currentUser;
-      //console.log('nota creada', user.uid, newNote);
-      await db.collection('users').doc(user.uid).collection('notesId').add({id: newNote.id});
-      await db.collection('notes').doc(newNote.id).collection('userId').add({id: user.uid});
+      await db.collection('notes').add({ 
+        title, 
+        content,
+        createdAt: Date.now(),
+        userId: user.uid
+      });
     },
-    //notes
-    // login
     async doLogin({commit}, {email, password}) {
       await auth.signInWithEmailAndPassword(email, password);
       commit('SET_USER', auth.currentUser);
@@ -91,6 +86,9 @@ const store = new Vuex.Store({
   getters: {
     getUser(state) {
       return state.user;
+    },
+    getIndexNote: (state) => id => {
+      return state.notes.findIndex(object => object.noteId == id);
     }
   },
   modules: {

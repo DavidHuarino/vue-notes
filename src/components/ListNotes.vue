@@ -1,8 +1,9 @@
 <template>
     <div class="grid grid-cols-2 gap-2">
-        <div v-for="objectNote in notes" :key="objectNote.id" class="bg-blue-300">
+        <div v-for="objectNote in notes" :key="objectNote.noteId" class="bg-blue-300 p-3">
             <h1>{{objectNote.title}}</h1>
             <p>{{objectNote.content}}</p>
+            <button class="bg-gray-500 text-white p-1" @click="removeNote(objectNote.noteId)">Remove</button>
         </div>
     </div>
 </template>
@@ -10,6 +11,14 @@
 
 export default {
     name: 'ListNotes',
+    async created() {
+        this.$store.dispatch('getNotesById');
+    },
+    methods: {
+        async removeNote(id) {
+            this.$store.dispatch('removeNote', id);
+        }
+    },
     computed: {
         notes() {
             return this.$store.state.notes;
