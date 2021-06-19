@@ -14,7 +14,9 @@ module.exports = {
             red: colors.rose,
             pink: colors.fuchsia,
             white: colors.white,
-            indigo: colors.indigo
+            indigo: colors.indigo,
+            black: colors.black,
+            green: colors.green
         },
         fontFamily: {
             sans: ['Graphik', 'sans-serif'],
@@ -28,7 +30,12 @@ module.exports = {
             },
             borderRadius: {
                 '4xl': '2rem',
-            }
+            },
+            transitionDuration: {
+                '0': '0ms',
+                '2000': '2000ms',
+            },
+            
         }
-    }
+    },
 }
