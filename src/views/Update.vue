@@ -1,18 +1,18 @@
 <template>
-    <div class="w-full min-h-screen p-3" :class="bgColorContainer">
+    <div class="w-full min-h-screen p-3" :class="note.noteColor">
         <div>
             <div class="flex justify-around">
                 <router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
             <form id="my-form" @submit.prevent="createNote()">
-                <input v-model="title" type="text" class="w-full text-xl focus:outline-none py-3" :class="bgColorContainer" placeholder="Titulo">
+                <input v-model="note.title" type="text" class="w-full text-xl focus:outline-none py-3" :class="note.noteColor" placeholder="Titulo">
                 <!--
                 <div contenteditable="true" class="min-h-screen focus:outline-none w-full flex flex-col" placeholder="Escribe tu nota aqui">
                     <img src="../assets/logo.png" alt="">
                     <p>como estan todoos</p>
                 </div>-->
-                <textarea v-model="content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="bgColorContainer" placeholder="Ingrese el contenido de la nota aqui"></textarea>
+                <textarea v-model="note.content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="note.noteColor" placeholder="Ingrese el contenido de la nota aqui"></textarea>
             </form>
             <!--<div contenteditable="true" class="min-h-screen focus:outline-none">
                 <img src="../assets/logo.png" alt="">
@@ -34,7 +34,7 @@
                     <h2 class="text-xl">Colors</h2>
                     <div class="grid grid-cols-5 p-3 choose">
                         <label :class="bg" v-for="(bg, index) in classesColor" :key="index" class="w-10 h-10 rounded-full">
-                            <input type="radio" :value="bg" class="hidden" v-model="bgColorContainer"/>
+                            <input type="radio" :value="bg" class="hidden" v-model="note.noteColor"/>
                         </label>
                         <!--
                         <label class="bg-red-500 w-10 h-10 rounded-full">
@@ -47,7 +47,7 @@
                             <input type="radio" value="group3" class="hidden" v-model="selected"/>
                         </label>-->
                     </div>
-                    <span>{{selected}} {{bgColorContainer}}</span>
+                    
                 </div>
             </div>
         </transition>
@@ -55,21 +55,25 @@
 </template>
 <script>
 export default {
-    name: 'Create',
+    name: 'Update',
     data() {
         return {
-            title: '',
-            content: '',
+            noteId: this.$route.params.id,
             showModalColor: false,
-            selected: null,
-            bgColorContainer: 'blue',
-            classesColor: ['red', 'blue', 'gray']
+            classesColor: ['red', 'blue', 'gray'],
         }
     },
+    created() {
+        this.getNote();
+    },
     methods: {
-        createNote() {
-            this.$store.dispatch('addNoteToFirebase', {title: this.title, content: this.content, noteColor: this.bgColorContainer});
-            this.$router.push({name: 'Home'});
+        async getNote() {
+            await this.$store.dispatch('getNoteById', {noteId: this.noteId});
+        }
+    },
+    computed: {
+        note() {
+            return this.$store.state.note;
         }
     },
 }
@@ -93,5 +97,4 @@ export default {
     .gray {
         @apply bg-gray-500;
     }
-
 </style>

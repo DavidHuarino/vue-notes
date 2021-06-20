@@ -1,8 +1,10 @@
 <template>
     <div class="grid grid-cols-2 gap-2">
         <div v-for="objectNote in notes" :key="objectNote.noteId" class="bg-blue-300 p-3">
-            <h1>{{objectNote.title}}</h1>
-            <p>{{objectNote.content}}</p>
+            <router-link :to="{name: 'updateNote', params: {id: objectNote.noteId}}">
+                <h1>{{objectNote.title}}</h1>
+                <p>{{objectNote.content}}</p>
+            </router-link>
             <button class="bg-gray-500 text-white p-1" @click="removeNote(objectNote.noteId)">Remove</button>
         </div>
     </div>

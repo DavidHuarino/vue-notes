@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register'
 import Create from '../views/Create'
 import store from '../store/index'
+import Update from '../views/Update'
 //import {auth} from '../firebase'
 Vue.use(VueRouter)
 
@@ -29,6 +30,12 @@ const routes = [
     path: '/create',
     name: 'createNote',
     component: Create,
+    meta: {requiresAuth: true}
+  },
+  {
+    path: '/notes/:id',
+    name: 'updateNote',
+    component: Update,
     meta: {requiresAuth: true}
   },
   {

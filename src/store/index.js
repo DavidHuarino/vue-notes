@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     user: null,
-    notes: []
+    notes: [],
+    note: {}
   },
   mutations: {
     SET_USER(state, user) {
@@ -15,12 +16,20 @@ const store = new Vuex.Store({
     SET_NOTES(state, notes) {
       state.notes = notes;
     },
+    SET_NOTE(state, note) {
+      state.note = note;
+    },
     REMOVE_NOTE(state, index) {
       state.notes.splice(index, 1);
     }
   },
   actions: {
     // firebase
+    async getNoteById({commit}, {noteId}) {
+      let note = await db.collection('notes').doc(noteId).get();
+      note.noteId = note.id;
+      commit('SET_NOTE', note.data());
+    },
     async removeNote({commit, getters}, id) {
       await db.collection('notes').doc(id).delete();
       let index = getters.getIndexNote(id);
@@ -37,13 +46,14 @@ const store = new Vuex.Store({
       });
       commit('SET_NOTES', notes);
     },
-    async addNoteToFirebase(_, {title, content}) {
+    async addNoteToFirebase(_, {title, content, noteColor}) {
       const user = auth.currentUser;
       await db.collection('notes').add({ 
         title, 
         content,
         createdAt: Date.now(),
-        userId: user.uid
+        userId: user.uid,
+        noteColor
       });
     },
     async doLogin({commit}, {email, password}) {
