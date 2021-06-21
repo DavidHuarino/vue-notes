@@ -7,7 +7,6 @@ const store = new Vuex.Store({
   state: {
     user: null,
     notes: [],
-    note: {}
   },
   mutations: {
     SET_USER(state, user) {
@@ -16,20 +15,12 @@ const store = new Vuex.Store({
     SET_NOTES(state, notes) {
       state.notes = notes;
     },
-    SET_NOTE(state, note) {
-      state.note = note;
-    },
     REMOVE_NOTE(state, index) {
       state.notes.splice(index, 1);
     }
   },
   actions: {
     // firebase
-    async getNoteById({commit}, {noteId}) {
-      let note = await db.collection('notes').doc(noteId).get();
-      note.noteId = note.id;
-      commit('SET_NOTE', note.data());
-    },
     async removeNote({commit, getters}, id) {
       await db.collection('notes').doc(id).delete();
       let index = getters.getIndexNote(id);
@@ -55,6 +46,9 @@ const store = new Vuex.Store({
         userId: user.uid,
         noteColor
       });
+    },
+    async updateNoteFromFirebase(_, {noteId, note}) {
+      await db.collection('notes').doc(noteId).update(note);
     },
     async doLogin({commit}, {email, password}) {
       await auth.signInWithEmailAndPassword(email, password);
@@ -98,7 +92,10 @@ const store = new Vuex.Store({
       return state.user;
     },
     getIndexNote: (state) => id => {
-      return state.notes.findIndex(object => object.noteId == id);
+      return state.notes.findIndex(object => object.noteId === id);
+    },
+    getNote: (state) => id => {
+      return state.notes.find(item => item.noteId === id);
     }
   },
   modules: {

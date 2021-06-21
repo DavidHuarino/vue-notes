@@ -1,6 +1,6 @@
 <template>
     <div class="grid grid-cols-2 gap-2">
-        <div v-for="objectNote in notes" :key="objectNote.noteId" class="bg-blue-300 p-3">
+        <div v-for="objectNote in notes" :key="objectNote.noteId" :class="objectNote.noteColor" class="p-3">
             <router-link :to="{name: 'updateNote', params: {id: objectNote.noteId}}">
                 <h1>{{objectNote.title}}</h1>
                 <p>{{objectNote.content}}</p>
@@ -28,3 +28,14 @@ export default {
     }
 }
 </script>
+<style scoped>
+    .blue {
+        @apply bg-blue-300;
+    }
+    .red {
+        @apply bg-red-400;
+    }
+    .gray {
+        @apply bg-gray-500;
+    }
+</style>

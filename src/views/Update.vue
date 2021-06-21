@@ -5,7 +5,7 @@
                 <router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
-            <form id="my-form" @submit.prevent="createNote()">
+            <form id="my-form" @submit.prevent="updateNote(noteId, note)">
                 <input v-model="note.title" type="text" class="w-full text-xl focus:outline-none py-3" :class="note.noteColor" placeholder="Titulo">
                 <!--
                 <div contenteditable="true" class="min-h-screen focus:outline-none w-full flex flex-col" placeholder="Escribe tu nota aqui">
@@ -54,6 +54,7 @@
     </div>
 </template>
 <script>
+import {db} from '../firebase';
 export default {
     name: 'Update',
     data() {
@@ -61,19 +62,20 @@ export default {
             noteId: this.$route.params.id,
             showModalColor: false,
             classesColor: ['red', 'blue', 'gray'],
+            note: {}
         }
     },
-    created() {
-        this.getNote();
+    async beforeRouteEnter (to, from, next) {
+        let note = await db.collection('notes').doc(to.params.id).get();
+        next(vm => {
+            vm.note = note.data();
+        });
     },
     methods: {
-        async getNote() {
-            await this.$store.dispatch('getNoteById', {noteId: this.noteId});
-        }
-    },
-    computed: {
-        note() {
-            return this.$store.state.note;
+        async updateNote(noteId, note) {
+            note.noteId = noteId;
+            this.$store.dispatch('updateNoteFromFirebase', {noteId, note});
+            this.$router.push({name: 'Home'});
         }
     },
 }
