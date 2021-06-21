@@ -13,10 +13,13 @@
 
 export default {
     name: 'ListNotes',
-    async created() {
-        this.$store.dispatch('getNotesById');
+    created() {
+        this.getNotes();
     },
     methods: {
+        getNotes() {
+            this.$store.dispatch('getNotesById');
+        },
         async removeNote(id) {
             this.$store.dispatch('removeNote', id);
         }

@@ -26,6 +26,13 @@ const store = new Vuex.Store({
       let index = getters.getIndexNote(id);
       commit('REMOVE_NOTE', index);
     },
+    getNotesById({commit}) {
+      db.collection('notes').onSnapshot(res => {
+        const notes = res.docs.map(doc => ({noteId: doc.id, ...doc.data() }));
+        commit('SET_NOTES', notes);
+      });
+    },
+    /*
     async getNotesById({commit}) {
       const user = auth.currentUser;
       let notes = [];
@@ -36,7 +43,7 @@ const store = new Vuex.Store({
         notes.push(newNote);
       });
       commit('SET_NOTES', notes);
-    },
+    },*/
     async addNoteToFirebase(_, {title, content, noteColor}) {
       const user = auth.currentUser;
       await db.collection('notes').add({ 
