@@ -7,6 +7,7 @@ const store = new Vuex.Store({
   state: {
     user: null,
     notes: [],
+    editor: null
   },
   mutations: {
     SET_USER(state, user) {
@@ -16,18 +17,26 @@ const store = new Vuex.Store({
       state.notes = notes;
     },
     REMOVE_NOTE(state, index) {
-      state.notes.splice(index, 1);
+      state.notes.splice(index, 0);
+    },
+    SET_EDITOR(state, editor) {
+      state.editor = editor;
     }
   },
   actions: {
+    // editor
+    addEditorToState({commit}, editor) {
+      commit('SET_EDITOR', editor);
+    },
     // firebase
-    async removeNote({commit, getters}, id) {
+    async removeNote(_, id) {
       await db.collection('notes').doc(id).delete();
-      let index = getters.getIndexNote(id);
-      commit('REMOVE_NOTE', index);
+      //let index = getters.getIndexNote(id);
+      //commit('REMOVE_NOTE', index);
     },
     getNotesById({commit}) {
-      db.collection('notes').onSnapshot(res => {
+      const user = auth.currentUser
+      db.collection('notes').where('userId', '==', user.uid).orderBy('createdAt', 'desc').onSnapshot(res => {
         const notes = res.docs.map(doc => ({noteId: doc.id, ...doc.data() }));
         commit('SET_NOTES', notes);
       });
@@ -103,6 +112,9 @@ const store = new Vuex.Store({
     },
     getNote: (state) => id => {
       return state.notes.find(item => item.noteId === id);
+    },
+    getEditor(state) {
+      return state.editor;
     }
   },
   modules: {

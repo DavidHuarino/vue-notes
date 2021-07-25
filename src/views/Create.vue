@@ -5,15 +5,37 @@
                 <router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
+            <div v-if="editor">
+                <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+                    bold
+                </button>
+                <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+                    strike
+                </button>
+            </div>
             <form id="my-form" @submit.prevent="createNote()">
                 <input v-model="title" type="text" class="w-full text-xl focus:outline-none py-3" :class="bgColorContainer" placeholder="Titulo">
                 <!--
                 <div contenteditable="true" class="min-h-screen focus:outline-none w-full flex flex-col" placeholder="Escribe tu nota aqui">
                     <img src="../assets/logo.png" alt="">
                     <p>como estan todoos</p>
-                </div>-->
-                <textarea v-model="content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="bgColorContainer" placeholder="Ingrese el contenido de la nota aqui"></textarea>
+                </div>
+                -->
+                <!--<textarea v-smodel="content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="bgColorContainer" placeholder="Ingrese el contenido de la nota aqui"></textarea>-->
+                <editor v-model="content"/>
             </form>
+            <!--<editor v-model="content" />
+            <div class="content">
+                <h3>Content</h3>
+                <pre><code>{{ content }}</code></pre>
+            </div>-->
+            {{content}}
+            <!--
+            <editor v-model="content" />
+            <div class="content">
+                <h3>Content</h3>
+                <pre><code>{{ content }}</code></pre>
+            </div>-->
             <!--<div contenteditable="true" class="min-h-screen focus:outline-none">
                 <img src="../assets/logo.png" alt="">
                 <p>como estan todoos</p>
@@ -54,8 +76,12 @@
     </div>
 </template>
 <script>
+import Editor from '../components/Editor.vue'
 export default {
     name: 'Create',
+    components: {
+        Editor
+    },
     data() {
         return {
             title: '',
@@ -63,7 +89,7 @@ export default {
             showModalColor: false,
             selected: null,
             bgColorContainer: 'blue',
-            classesColor: ['red', 'blue', 'gray']
+            classesColor: ['red', 'blue', 'gray'],
         }
     },
     methods: {
@@ -72,6 +98,11 @@ export default {
             this.$router.push({name: 'Home'});
         }
     },
+    computed: {
+        editor() {
+            return this.$store.getters.getEditor;
+        }
+    }
 }
 </script>
 <style scoped>
@@ -93,5 +124,5 @@ export default {
     .gray {
         @apply bg-gray-500;
     }
-
+    /* tip tap css */
 </style>

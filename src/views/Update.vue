@@ -5,6 +5,11 @@
                 <router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
+            <div v-if="editor">
+                <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+                    bold
+                </button>
+            </div>
             <form id="my-form" @submit.prevent="updateNote(noteId, note)">
                 <input v-model="note.title" type="text" class="w-full text-xl focus:outline-none py-3" :class="note.noteColor" placeholder="Titulo">
                 <!--
@@ -12,7 +17,10 @@
                     <img src="../assets/logo.png" alt="">
                     <p>como estan todoos</p>
                 </div>-->
+                <!--
                 <textarea v-model="note.content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="note.noteColor" placeholder="Ingrese el contenido de la nota aqui"></textarea>
+                -->
+                <editor v-model="note.content"/>
             </form>
             <!--<div contenteditable="true" class="min-h-screen focus:outline-none">
                 <img src="../assets/logo.png" alt="">
@@ -55,8 +63,12 @@
 </template>
 <script>
 import {db} from '../firebase';
+import Editor from '../components/Editor.vue';
 export default {
     name: 'Update',
+    components: {
+        Editor
+    },
     data() {
         return {
             noteId: this.$route.params.id,
@@ -78,6 +90,11 @@ export default {
             this.$router.push({name: 'Home'});
         }
     },
+    computed: {
+        editor() {
+            return this.$store.getters.getEditor;
+        }
+    }
 }
 </script>
 <style scoped>
