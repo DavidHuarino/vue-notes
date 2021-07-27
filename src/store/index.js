@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {db, auth} from '../firebase'
+import {db, auth, storage} from '../firebase'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -27,6 +27,23 @@ const store = new Vuex.Store({
     // editor
     addEditorToState({commit}, editor) {
       commit('SET_EDITOR', editor);
+    },
+    // storage 
+    async uploadImageToStorage(_, file) {
+      const user = auth.currentUser;
+      const uploadPhoto = () => {
+        let fileName = `images/${user.uid}/${file.name}`;
+        return storage.ref(fileName).put(file);
+      };
+      function getDownloadURL(ref) {
+        return ref.getDownloadURL();
+      }
+      try {
+        let upload = await uploadPhoto();
+        return await getDownloadURL(upload.ref);
+      } catch (error) {
+        throw Error(error.message);
+      }
     },
     // firebase
     async removeNote(_, id) {

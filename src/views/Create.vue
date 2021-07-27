@@ -12,6 +12,9 @@
                 <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
                     strike
                 </button>
+                <button @click="addImage">
+                    add image from URL
+                </button>
             </div>
             <form id="my-form" @submit.prevent="createNote()">
                 <input v-model="title" type="text" class="w-full text-xl focus:outline-none py-3" :class="bgColorContainer" placeholder="Titulo">
@@ -29,7 +32,7 @@
                 <h3>Content</h3>
                 <pre><code>{{ content }}</code></pre>
             </div>-->
-            {{content}}
+            
             <!--
             <editor v-model="content" />
             <div class="content">
@@ -44,7 +47,7 @@
                 <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'font']"/></button>
                 <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'tasks']"/></button>
                 <label for="imageUpload"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'image']"/></label>
-                <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                <input type="file" id="imageUpload" accept="image/*" @change="uploadImage" class="hidden">
                 <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'microphone']"/></button>
                 <button @click="showModalColor=true"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'fill-drip']"/></button>
             </div>
@@ -76,7 +79,8 @@
     </div>
 </template>
 <script>
-import Editor from '../components/Editor.vue'
+//import {storage} from '../firebase.js';
+import Editor from '../components/Editor.vue';
 export default {
     name: 'Create',
     components: {
@@ -86,16 +90,52 @@ export default {
         return {
             title: '',
             content: '',
+            imageURL: null,
             showModalColor: false,
             selected: null,
             bgColorContainer: 'blue',
             classesColor: ['red', 'blue', 'gray'],
         }
     },
+    watch: {
+        content(content) {
+            console.log("getJson", this.editor.getJSON(), content);
+        }
+    },
     methods: {
         createNote() {
             this.$store.dispatch('addNoteToFirebase', {title: this.title, content: this.content, noteColor: this.bgColorContainer});
             this.$router.push({name: 'Home'});
+        },
+        addImage() {
+            const url = window.prompt('URL')
+            if (url) {
+                this.editor.chain().focus().setImage({ src: url }).run();
+            }
+        },
+        async uploadImage(event) {
+            console.log(event.target.files[0]);
+            const file = event.target.files[0];
+            this.imageURL = await this.$store.dispatch('uploadImageToStorage', file);
+            if (this.imageURL) {
+                this.editor.chain().focus().setImage({ src: this.imageURL }).run();
+            }
+            this.imageURL = null;
+            //const ref = storage.ref(`images/${file.name}`);
+            //const upload = ref.put(file);
+            /*
+            upload.on(
+                "state_changed",
+                function progress(snapshot) {
+                    console.warn((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                },
+                function error(error) {
+                    console.error(error);
+                },
+                function complete() {
+                    console.info("Finished uploading!");
+                }
+            );*/
         }
     },
     computed: {

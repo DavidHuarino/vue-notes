@@ -8,6 +8,11 @@
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
+import Image from '@tiptap/extension-image'
+import Dropcursor from '@tiptap/extension-dropcursor'
 export default {
   name: 'Editor',
   components: {
@@ -51,8 +56,14 @@ export default {
         Placeholder.configure({
           placeholder: "Ingrese el contenido de la nota aqui",
         }),
+        Document,
+        Paragraph,
+        Text,
+        Image,
+        Dropcursor
       ],
       content: this.value,
+      autofocus: true,
       onUpdate: () => {
         // HTML
         this.$emit('input', this.editor.getHTML())
