@@ -28,11 +28,32 @@ const store = new Vuex.Store({
     addEditorToState({commit}, editor) {
       commit('SET_EDITOR', editor);
     },
-    // storage 
-    async uploadImageToStorage(_, file) {
+    // storage
+    removeItemsByDirectoryName(_, { directoryName }) {
+      const user = auth.currentUser;
+      let ref = storage.ref(`images/${user.uid}/${directoryName}`);
+      ref.listAll().then(dir => {
+        dir.items.forEach(fileRef => {
+          var dirRef = storage.ref(fileRef.fullPath);
+          dirRef.getDownloadURL().then(function(url) {
+            var imgRef = storage.refFromURL(url);
+            imgRef.delete().then(function() {
+              // File deleted successfully 
+              console.log("eliminado correctamente");
+            }).catch(function(error) {
+              // There has been an error
+              console.log(error);  
+            });
+          });
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    async uploadImageToStorage(_, {file, photoId, directoryName}) {
       const user = auth.currentUser;
       const uploadPhoto = () => {
-        let fileName = `images/${user.uid}/${file.name}`;
+        let fileName = `images/${user.uid}/${directoryName}/${photoId}`;
         return storage.ref(fileName).put(file);
       };
       function getDownloadURL(ref) {
@@ -45,7 +66,22 @@ const store = new Vuex.Store({
         throw Error(error.message);
       }
     },
+    async addImageUrlToFirebase(_, {fileName, directoryName}) {
+      const user = auth.currentUser;
+      await db.collection('images').add({
+        userId: user.uid,
+        fileName,
+        directoryName
+      });
+    },
     // firebase
+    async setNewDirectoryNameToFirebase(_, {directoryName}) {
+      const user = auth.currentUser;
+      await db.collection('prevDirectoryNames').add({
+        userId: user.uid,
+        directoryName
+      });
+    },
     async removeNote(_, id) {
       await db.collection('notes').doc(id).delete();
       //let index = getters.getIndexNote(id);

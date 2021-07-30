@@ -50,6 +50,17 @@ export default {
     },
   },
   created() {
+    const customImage = Image.extend({
+      addAttributes() {
+        return {
+          ...this.parent?.(),
+          fileName: {
+            default: null,
+            rendered: false
+          }
+        }
+      }
+    });
     const createEditor = new Editor({
       extensions: [
         StarterKit,
@@ -59,7 +70,7 @@ export default {
         Document,
         Paragraph,
         Text,
-        Image,
+        customImage,
         Dropcursor
       ],
       content: this.value,
@@ -69,7 +80,7 @@ export default {
         this.$emit('input', this.editor.getHTML())
 
         // JSON
-        // this.$emit('input', this.editor.getJSON())
+        //this.$emit('input', this.editor.getJSON())
       },
     });
     this.setContentToEditor(createEditor);
