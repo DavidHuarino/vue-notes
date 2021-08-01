@@ -29,9 +29,34 @@ const store = new Vuex.Store({
       commit('SET_EDITOR', editor);
     },
     // storage
-    removeItemsByDirectoryName(_, { directoryName }) {
+    async removeUnseenImagesFromStorage(_, { seen, directoryName }) {
       const user = auth.currentUser;
-      let ref = storage.ref(`images/${user.uid}/${directoryName}`);
+      const ref = storage.ref(`images/${user.uid}/${directoryName}`);
+      const refImages = await ref.listAll();
+      refImages.items.forEach(async element => {
+        //console.log(element, "gaaa", seen)
+        let fileName = element.name;
+        //let fullPath = element.fullPath;
+        if (!seen.has(fileName)) {
+          await element.delete();
+        }
+      });
+      console.log("se han eliminado los que no estan registrados")
+      //const promises = ref.items.map(item => {
+        //return item.delete();
+      //  console.log(item, "sal de una vez cagada", seen);
+      //});
+      //return await Promise.all(promises);
+    },
+    async removeItemsByDirectoryName(_, { directoryName }) {
+      const user = auth.currentUser;
+      const ref = storage.ref(`images/${user.uid}/${directoryName}`);
+      const refImages = await ref.listAll();
+      refImages.items.forEach(async element => {
+        await element.delete();
+        console.log("eliminado correctamente")
+      });
+      /*
       ref.listAll().then(dir => {
         dir.items.forEach(fileRef => {
           var dirRef = storage.ref(fileRef.fullPath);
@@ -49,6 +74,7 @@ const store = new Vuex.Store({
       }).catch(error => {
         console.log(error);
       });
+      */
     },
     async uploadImageToStorage(_, {file, photoId, directoryName}) {
       const user = auth.currentUser;

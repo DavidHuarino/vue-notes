@@ -104,11 +104,20 @@ export default {
             prevDirectoryName: null
         }
     },
-    //watch: {
-    //    content(content) {
-    //        console.log("getJson", this.editor.getJSON(), content);
-    //    }
-    //},
+    watch: {
+        content(content) {
+            console.log("getJson", this.editor.getJSON(), content);
+            let objectImages = this.editor.getJSON().content;
+            const seenFileName = new Set();
+            objectImages.forEach(object => {
+                if (object.type === 'image') {
+                    let fileName = object.attrs.fileName;
+                    seenFileName.add(fileName);
+                }
+            });
+            console.log("setFile", seenFileName);
+        }
+    },
     async created() {
         //window.onbeforeunload = function() {
         //    this.$store.dispatch('removeItemsByDirectoryName', {
@@ -146,19 +155,19 @@ export default {
             let id = doc.docs[0].id;
             this.prevDirectoryName = doc.docs[0].data().directoryName;
             await db.collection('prevDirectoryNames').doc(id).delete();
-            this.removeItems(this.prevDirectoryName);
+            await this.removeItems(this.prevDirectoryName);
             //if (doc.docs[0].exists) {
                 //console.log(doc.docs[0].data().directoryName, "gaaa");
-            //    return doc.docs[0].data().directoryName;
+            //    return doc.docs[0].data().directsoryName;
             //}
             //return null
         },
         backMenu() {
-            this.removeItems();
+            this.removeItems(this.directoryName);
             this.$router.push({name: 'Home'});
         },
-        removeItems: function removeItems (directoryName) {
-            this.$store.dispatch('removeItemsByDirectoryName', {
+        async removeItems(directoryName) {
+            await this.$store.dispatch('removeItemsByDirectoryName', {
                 directoryName
             });
         },
@@ -168,8 +177,18 @@ export default {
                 content: this.content, 
                 noteColor: this.bgColorContainer
             });
+            // remove images not exist in json
             console.log(this.editor.getJSON(), " json")
+            await this.$store.dispatch('removeUnseenImagesFromStorage', {
+                seen: this.getSeenImages,
+                directoryName: this.directoryName
+            });
+            const user = auth.currentUser;
+            const doc = await db.collection('prevDirectoryNames').where('userId', '==', user.uid).limit(1).get();
+            let id = doc.docs[0].id;
+            await db.collection('prevDirectoryNames').doc(id).delete();
             this.$router.push({name: 'Home'});
+            //await db.collections('')
             //localStorage.removeItem('directoryName');
         },
         //cleanImages() {
@@ -223,6 +242,17 @@ export default {
     computed: {
         editor() {
             return this.$store.getters.getEditor;
+        },
+        getSeenImages() {
+            const seen = new Set();
+            const objectImages = this.editor.getJSON().content;
+            objectImages.forEach(object => {
+                if (object.type === 'image') {
+                    let fileName = object.attrs.fileName;
+                    seen.add(fileName);
+                }
+            });
+            return seen
         }
     }
 }
