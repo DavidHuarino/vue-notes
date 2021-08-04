@@ -4,6 +4,12 @@
             <div class="flex justify-around">
                 <!--<router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>-->
                 <button @click="backMenu()"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></button>
+                <button @click="editor.chain().focus().undo().run()" v-if="editor">
+                    <font-awesome-icon class="text-black text-xl" :icon="['fas', 'undo']"/>
+                </button>
+                <button @click="editor.chain().focus().redo().run()" v-if="editor">
+                    <font-awesome-icon class="text-black text-xl" :icon="['fas', 'redo']"/>
+                </button>
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
             <div v-if="editor">
@@ -17,7 +23,7 @@
                     add image from URL
                 </button>
             </div>
-            <form id="my-form" @submit.prevent="createNote()">
+            <form id="my-form" @submit.prevent="createNote()" class="min-h-full mb-28">
                 <input v-model="title" type="text" class="w-full text-xl focus:outline-none py-3" :class="bgColorContainer" placeholder="Titulo">
                 <!--
                 <div contenteditable="true" class="min-h-screen focus:outline-none w-full flex flex-col" placeholder="Escribe tu nota aqui">
@@ -28,7 +34,8 @@
                 <!--<textarea v-smodel="content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="bgColorContainer" placeholder="Ingrese el contenido de la nota aqui"></textarea>-->
                 <editor v-model="content"/>
             </form>
-            {{ content }}
+            <!--
+            {{ content }}-->
             <!--<editor v-model="content" />
             <div class="content">
                 <h3>Content</h3>
@@ -101,7 +108,9 @@ export default {
             classesColor: ['red', 'blue', 'gray'],
             fileName: uuid.v1(),
             directoryName: uuid.v1(),
-            prevDirectoryName: null
+            prevDirectoryName: null,
+            noteIdUrl: uuid.v1(),
+            prevDirectoryNameId: null
         }
     },
     watch: {
@@ -130,9 +139,15 @@ export default {
         //}
 
         this.directoryName = this.$uuid.v4();
-        await this.$store.dispatch('setNewDirectoryNameToFirebase', {
-            directoryName: this.directoryName
-        });
+        if (this.prevDirectoryName) {
+            await db.collection('prevDirectoryNames').doc(this.prevDirectoryNameId).update({
+                directoryName: this.directoryName
+            });
+        } else {
+            await this.$store.dispatch('setNewDirectoryNameToFirebase', {
+                directoryName: this.directoryName
+            });
+        }
         //const query = await this.$store.dispatch('getDirectoryName', {
         //    directoryName: this.directoryName
         //});
@@ -152,9 +167,10 @@ export default {
             //if (doc.docs[0].exists) {
             //    console.log("es verdadero")
             //}
-            let id = doc.docs[0].id;
+            //let id = doc.docs[0].id;
+            this.prevDirectoryNameId = doc.docs[0].id;
             this.prevDirectoryName = doc.docs[0].data().directoryName;
-            await db.collection('prevDirectoryNames').doc(id).delete();
+            //await db.collection('prevDirectoryNames').doc(id).delete();
             await this.removeItems(this.prevDirectoryName);
             //if (doc.docs[0].exists) {
                 //console.log(doc.docs[0].data().directoryName, "gaaa");
@@ -162,8 +178,8 @@ export default {
             //}
             //return null
         },
-        backMenu() {
-            this.removeItems(this.directoryName);
+        async backMenu() {
+            await this.removeItems(this.directoryName);
             this.$router.push({name: 'Home'});
         },
         async removeItems(directoryName) {
@@ -172,10 +188,12 @@ export default {
             });
         },
         async createNote() {
+            this.noteIdUrl = this.$uuid.v4();
             await this.$store.dispatch('addNoteToFirebase', {
                 title: this.title, 
                 content: this.content, 
-                noteColor: this.bgColorContainer
+                noteColor: this.bgColorContainer,
+                noteIdUrl: this.noteIdUrl
             });
             // remove images not exist in json
             console.log(this.editor.getJSON(), " json")

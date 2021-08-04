@@ -62,6 +62,11 @@ export default {
       }
     });
     const createEditor = new Editor({
+      editorProps: {
+        attributes: {
+          class: 'min-h-screen'
+        }
+      },
       extensions: [
         StarterKit,
         Placeholder.configure({

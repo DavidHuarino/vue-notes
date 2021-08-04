@@ -1,6 +1,6 @@
 <template>
     <div class="grid grid-cols-2 gap-2">
-        <div v-for="objectNote in notes" :key="objectNote.noteId" :class="objectNote.noteColor" class="p-3">
+        <div v-for="objectNote in notes" :key="objectNote.noteIdUrl" :class="objectNote.noteColor" class="p-3">
             <router-link :to="{name: 'updateNote', params: {id: objectNote.noteId}}">
                 <h1>{{objectNote.title}}</h1>
                 <p>{{objectNote.content}}</p>

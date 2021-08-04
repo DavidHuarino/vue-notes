@@ -132,14 +132,15 @@ const store = new Vuex.Store({
       });
       commit('SET_NOTES', notes);
     },*/
-    async addNoteToFirebase(_, {title, content, noteColor}) {
+    async addNoteToFirebase(_, {title, content, noteColor, noteIdUrl}) {
       const user = auth.currentUser;
       await db.collection('notes').add({ 
         title, 
         content,
         createdAt: Date.now(),
         userId: user.uid,
-        noteColor
+        noteColor,
+        noteIdUrl
       });
     },
     async updateNoteFromFirebase(_, {noteId, note}) {
