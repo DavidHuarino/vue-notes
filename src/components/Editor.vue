@@ -13,6 +13,7 @@ import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
 import Image from '@tiptap/extension-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
+import Highlight from '@tiptap/extension-highlight'
 export default {
   name: 'Editor',
   components: {
@@ -64,7 +65,7 @@ export default {
     const createEditor = new Editor({
       editorProps: {
         attributes: {
-          class: 'min-h-screen'
+          class: ''
         }
       },
       extensions: [
@@ -76,7 +77,8 @@ export default {
         Paragraph,
         Text,
         customImage,
-        Dropcursor
+        Dropcursor,
+        Highlight
       ],
       content: this.value,
       autofocus: true,
@@ -106,7 +108,7 @@ export default {
   }
 }
 </script>
-<style >
+<style>
   .ProseMirror:focus {
     outline: none;
   }
