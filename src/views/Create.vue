@@ -1,6 +1,6 @@
 <template>
     <div class="w-full min-h-screen p-3" :class="bgColorContainer">
-        <div>
+        <div class="space-y-3">
             <div class="flex justify-around" id="div-first">
                 <!--<router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>-->
                 <button @click="backMenu()"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></button>
@@ -13,7 +13,7 @@
                 <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
             </div>
             
-            <div v-if="editor" class="bg-gray-300 p-2 flex justify-around shadow-md border border-black" id="div-second">
+            <div v-if="editor" class="bg-gray-300 p-1 flex justify-around shadow-md border border-black" id="div-second">
                 <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }" class="p-2">
                     <svg viewBox="0 0 24 24" id="ri-bold" class="w-5 rounded">
                         <g>
@@ -45,6 +45,18 @@
                             <path d="M15.243 4.515l-6.738 6.737-.707 2.121-1.04 1.041 2.828 2.829 1.04-1.041 2.122-.707 6.737-6.738-4.242-4.242zm6.364 3.535a1 1 0 0 1 0 1.414l-7.779 7.779-2.12.707-1.415 1.414a1 1 0 0 1-1.414 0l-4.243-4.243a1 1 0 0 1 0-1.414l1.414-1.414.707-2.121 7.779-7.779a1 1 0 0 1 1.414 0l5.657 5.657zm-6.364-.707l1.414 1.414-4.95 4.95-1.414-1.414 4.95-4.95zM4.283 16.89l2.828 2.829-1.414 1.414-4.243-1.414 2.828-2.829z"></path>
                         </g>
                     </svg>
+                </button>
+                <button @click="editor.chain().focus().setTextAlign('left').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }" class="py-2 px-2.5">
+                    <font-awesome-icon class="text-base" :icon="['fas', 'align-left']"/>
+                </button>
+                <button @click="editor.chain().focus().setTextAlign('center').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }" class="py-2 px-2.5">
+                    <font-awesome-icon class="text-base" :icon="['fas', 'align-center']"/>
+                </button>
+                <button @click="editor.chain().focus().setTextAlign('right').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }" class="py-2 px-2.5">
+                    <font-awesome-icon class="text-base" :icon="['fas', 'align-right']"/>
+                </button>
+                <button @click="editor.chain().focus().setTextAlign('justify').run()" :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }" class="py-2 px-2.5">
+                    <font-awesome-icon class="text-base" :icon="['fas', 'align-justify']"/>
                 </button>
             </div>
             
@@ -320,10 +332,16 @@ export default {
         /*max-height: calc(100vh - 160px);*/
 
     }
+    .is-active-align {
+        background: black;
+        color: white;
+        fill: white;
+    }
     .is-active {
         background: black;
         fill: white;
         border-radius: 4px;
+        color: white;
         transition: ease 0.5s all;
     }
     button:focus {

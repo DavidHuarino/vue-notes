@@ -14,6 +14,7 @@ import Text from '@tiptap/extension-text'
 import Image from '@tiptap/extension-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Highlight from '@tiptap/extension-highlight'
+import TextAlign from '@tiptap/extension-text-align'
 export default {
   name: 'Editor',
   components: {
@@ -58,6 +59,9 @@ export default {
           fileName: {
             default: null,
             rendered: false
+          },
+          style: {
+            default: 'width: 80%; margin: auto'
           }
         }
       }
@@ -78,7 +82,10 @@ export default {
         Text,
         customImage,
         Dropcursor,
-        Highlight
+        Highlight,
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
       ],
       content: this.value,
       autofocus: true,
