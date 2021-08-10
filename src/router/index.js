@@ -62,9 +62,9 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   //const isAuthenticated = auth.currentUser;
   //console.log(isAuthenticated, to.meta.requiresAuth);
-  if(to.meta.requiresAuth && !(await store.dispatch('getCurrentUser'))) {
+  if(to.meta.requiresAuth && !(await store.dispatch('user/getCurrentUser'))) {
     next({name: 'Login'});
-  } else if(!to.meta.requiresAuth && (await store.dispatch('getCurrentUser'))) {
+  } else if(!to.meta.requiresAuth && (await store.dispatch('user/getCurrentUser'))) {
     next({name: 'Home'})
   } else {
     next();

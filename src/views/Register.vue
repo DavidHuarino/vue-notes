@@ -54,7 +54,7 @@ export default {
         },
         async doRegister() {
             try {
-                await this.$store.dispatch('doRegister', {name: this.user.username, email: this.user.email, password: this.user.password});
+                await this.$store.dispatch('user/doRegister', {name: this.user.username, email: this.user.email, password: this.user.password});
                 this.doReset();
                 this.goLogin();
                 console.log("has sido registrado");

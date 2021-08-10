@@ -2,10 +2,10 @@
     <div class="grid grid-cols-2 gap-2">
         <div v-for="objectNote in notes" :key="objectNote.noteIdUrl" :class="objectNote.noteColor" class="p-3">
             <router-link :to="{name: 'updateNote', params: {id: objectNote.noteId}}">
-                <h1>{{objectNote.title}}</h1>
-                <p>{{objectNote.content}}</p>
+                <h2 class="truncate">{{objectNote.title}}</h2>
+                <p class="truncate">{{objectNote.content}}</p>
             </router-link>
-            <button class="bg-gray-500 text-white p-1" @click="removeNote(objectNote.noteId)">Remove</button>
+            <button class="bg-gray-500 text-white p-1 " @click="removeNote(objectNote.noteId)">Remove</button>
         </div>
     </div>
 </template>
@@ -18,15 +18,15 @@ export default {
     },
     methods: {
         getNotes() {
-            this.$store.dispatch('getNotesById');
+            this.$store.dispatch('notes/getNotesById');
         },
         async removeNote(id) {
-            this.$store.dispatch('removeNote', id);
+            this.$store.dispatch('notes/removeNote', id);
         }
     },
     computed: {
         notes() {
-            return this.$store.state.notes;
+            return this.$store.getters['notes/getNotes'];
         }
     }
 }

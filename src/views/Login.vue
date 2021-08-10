@@ -44,7 +44,7 @@ export default {
         },
         async doLogin() {
             try {
-                await this.$store.dispatch('doLogin', {email: this.user.email, password: this.user.password});
+                await this.$store.dispatch('user/doLogin', {email: this.user.email, password: this.user.password});
                 this.doReset()
                 this.$router.push({name: 'Home'});
                 console.log("entraste a la app");

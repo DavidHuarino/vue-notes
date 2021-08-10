@@ -101,16 +101,15 @@ export default {
   },
   methods: {
     setContentToEditor(editor) {
-      this.$store.dispatch('addEditorToState', editor);
+      this.$store.dispatch('notes/addEditorToState', editor);
     }
   },
   computed: {
     editor() {
-      return this.$store.getters.getEditor;
+      return this.$store.getters['notes/getEditor'];
     }
   },
   beforeDestroy() {
-    //this.editor.destroy()
     this.editor.destroy();
   }
 }
