@@ -15,6 +15,14 @@ import Image from '@tiptap/extension-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
+import TextStyle from '@tiptap/extension-text-style'
+import Underline from '@tiptap/extension-underline'
+import FontFamily from '@tiptap/extension-font-family'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
+//import { Extension } from '@tiptap/core'
+//import { FontColor } from './font-color'
+//import { FontColor } from '../editor/font-color.ts'
 export default {
   name: 'Editor',
   components: {
@@ -61,7 +69,7 @@ export default {
             rendered: false
           },
           style: {
-            default: 'width: 80%; margin: auto'
+            default: 'width: 95%; margin: auto'
           }
         }
       }
@@ -82,13 +90,27 @@ export default {
         Text,
         customImage,
         Dropcursor,
-        Highlight,
+        Highlight.configure({ multicolor: true }),
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
+        TextStyle,
+        Underline,
+        FontFamily,
+        TaskList.configure({
+          HTMLAttributes: {
+            class: 'flex',
+          }
+        }),
+        TaskItem.configure({
+          HTMLAttributes: {
+            class: ''
+          }
+        })
+        //FontColor,
       ],
       content: this.value,
-      autofocus: true,
+      autofocus: 'end',
       onUpdate: () => {
         // HTML
         this.$emit('input', this.editor.getHTML())
@@ -115,6 +137,11 @@ export default {
 }
 </script>
 <style>
+  .my-custom-list-ul {
+    ul[data-type="taskList"] {
+      display: flex;
+    }
+  }
   .ProseMirror:focus {
     outline: none;
   }
@@ -125,5 +152,25 @@ export default {
     color: #A9A9A9;
     pointer-events: none;
     height: 0;
+  }
+  ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+    margin-left: 20px;
+  }
+  li {
+    display: flex;
+    align-items: center;
+  }
+  li  > label {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+  }
+  input[type="checkbox"] {
+    height: 20px;
+    width: 20px;
+    outline: none;
+    cursor: pointer;
+    @apply rounded-lg;
   }
 </style>

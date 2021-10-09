@@ -6,11 +6,20 @@
       <router-link to="/about">About</router-link>
     </div>
     -->
-    <router-view/>
+    <transition name="fade-route" mode="out-in" appear>
+      <router-view/>
+    </transition>
   </div>
 </template>
 
 <style>
+.fade-route-enter-active, .fade-route-leave-active {
+  transition: opacity .2s ease
+}
+
+.fade-route-enter, .fade-route-leave-active {
+  opacity: 0
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

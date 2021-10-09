@@ -7,6 +7,8 @@ import Create from '../views/Create'
 import store from '../store/index'
 import Update from '../views/Update'
 import Test from '../views/Test'
+import CreateTodo from '../views/CreateTodo'
+import UpdateTodo from '../views/UpdateTodo'
 //import {auth} from '../firebase'
 Vue.use(VueRouter)
 
@@ -43,6 +45,18 @@ const routes = [
     path: '/test',
     name: 'test',
     component: Test,
+    meta: {requiresAuth: true}
+  },
+  {
+    path: '/createTodo',
+    name: 'createTodo',
+    component: CreateTodo,
+    meta: {requiresAuth: true}
+  },
+  {
+    path: '/updateTodo/:id',
+    name: 'updateTodo',
+    component: UpdateTodo,
     meta: {requiresAuth: true}
   },
   {

@@ -4,6 +4,8 @@ import { auth } from '../firebase'
 import notes from './notes'
 import images from './images'
 import user from './user'
+import category from './category'
+import todos from './todos'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -188,7 +190,9 @@ const store = new Vuex.Store({
   modules: {
     notes,
     images,
-    user
+    user,
+    category,
+    todos
   }
 });
 store.dispatch('checkAuth');

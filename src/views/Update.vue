@@ -1,98 +1,138 @@
 <template>
     <div class="w-full min-h-screen p-3" :class="note.noteColor">
         <div>
-            <div class="flex justify-around">
-                <router-link :to="{name: 'Home'}"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/></router-link>
-                <button type="submit" form="my-form"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/></button>
-            </div>
-            <div v-if="editor">
-                <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-                    bold
-                </button>
+            <editor-header-update :editor="editor" />
+            <editor-commands :editor="editor" />
+            <div class="flex justify-between mt-2">
+                <p class="text-base text-gray-500 font-medium">{{note.currentTime}}</p>
+                <button class="bg-white rounded-full py-px px-1 text-sm tracking-wider font-medium focus:outline-none w-1/4 truncate" @click="modals.modalCategoryCreate='true'">{{note.selectedCategory}}</button>
             </div>
             <form id="my-form" @submit.prevent="updateNote(noteId, note)">
                 <input v-model="note.title" type="text" class="w-full text-xl focus:outline-none py-3" :class="note.noteColor" placeholder="Titulo">
-                <!--
-                <div contenteditable="true" class="min-h-screen focus:outline-none w-full flex flex-col" placeholder="Escribe tu nota aqui">
-                    <img src="../assets/logo.png" alt="">
-                    <p>como estan todoos</p>
-                </div>-->
-                <!--
-                <textarea v-model="note.content" name="" id="" rows="20" class="w-full focus:outline-none py-3" :class="note.noteColor" placeholder="Ingrese el contenido de la nota aqui"></textarea>
-                -->
-                <editor v-model="note.content"/>
+                <editor v-model="note.content" class="content" :style="{'height': `calc(${windowHeight}px - 210px)`}" />
             </form>
-            <!--<div contenteditable="true" class="min-h-screen focus:outline-none">
-                <img src="../assets/logo.png" alt="">
-                <p>como estan todoos</p>
-            </div>-->
-            <div class="inset-x-1 bottom-1 fixed bg-white rounded p-3 flex justify-evenly">
-                <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'font']"/></button>
-                <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'tasks']"/></button>
-                <label for="imageUpload"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'image']"/></label>
-                <input type="file" id="imageUpload" accept="image/*" class="hidden">
-                <button><font-awesome-icon class="text-black text-xl" :icon="['fas', 'microphone']"/></button>
-                <button @click="showModalColor=true"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'fill-drip']"/></button>
-            </div>
+             <editor-footer :editor="editor" :directoryName="note.directoryName" @open-modal="selectedModal" :selectedCategory="selectedCategory" @change-favorite-note="note.favoriteNote=!note.favoriteNote" :favoriteNote="note.favoriteNote"/>
+            <modal-text v-show="modals.modalText" @close-modal="modals.modalText=false" :editor="editor" />
+            <modal-color v-show="modals.modalColor" @close-modal="modals.modalColor=false" v-model="note.noteColor" />
+            <!-- <modal-category-update v-show="modals.modalCategory" @close-modal="modals.modalCategory=false" /> -->
+            <modal-delete v-show="modals.modalDelete" @close-modal-delete="modals.modalDelete=false" :objectNote="note" />
+            <modal-category-create v-show="modals.modalCategoryCreate" @close-modal="modals.modalCategoryCreate=false" :categories="categories" @selected-category-name="setSelectedCategoryName" />
         </div>
-        <transition name="fade">
-            <div v-if="showModalColor" class="bg-black inset-0 bg-opacity-50 flex justify-center items-end absolute">
-                <div class="bg-gray-200 w-full text-center relative h-48">
-                    <button @click="showModalColor=false"><font-awesome-icon class="text-black text-2xl top-2 right-1 absolute" :icon="['fas', 'times-circle']"/></button>
-                    <h2 class="text-xl">Colors</h2>
-                    <div class="grid grid-cols-5 p-3 choose">
-                        <label :class="bg" v-for="(bg, index) in classesColor" :key="index" class="w-10 h-10 rounded-full">
-                            <input type="radio" :value="bg" class="hidden" v-model="note.noteColor"/>
-                        </label>
-                        <!--
-                        <label class="bg-red-500 w-10 h-10 rounded-full">
-                            <input type="radio" value="group1" class="hidden" v-model="selected"/>
-                        </label>
-                        <label class="bg-blue-500 w-10 h-10 rounded-full">
-                            <input type="radio" value="group2" class="hidden" v-model="selected"/>
-                        </label>
-                        <label class="bg-green-500 w-10 h-10 rounded-full">
-                            <input type="radio" value="group3" class="hidden" v-model="selected"/>
-                        </label>-->
-                    </div>
-                    
-                </div>
-            </div>
-        </transition>
     </div>
 </template>
 <script>
 import {db} from '../firebase';
 import Editor from '../components/Editor.vue';
+import HeaderUpdate from '../components/HeaderUpdate';
+import Commands from '../components/Commands.vue';
+import Footer from '../components/Footer.vue';
+import ModalText from '../components/ModalText.vue';
+import ModalColor from '../components/ModalColor.vue';
+// import ModalCategoryUpdate from '../components/ModalCategoryUpdate.vue';
+import ModalDelete from '../components/ModalDelete.vue';
+import ModalCategoryCreate from '../components/ModalCategoryCreate.vue';
 export default {
     name: 'Update',
     components: {
-        Editor
+        Editor,
+        'editor-header-update': HeaderUpdate,
+        'editor-commands': Commands,
+        'editor-footer': Footer,
+        'modal-text': ModalText,
+        'modal-color': ModalColor,
+        // 'modal-category-update': ModalCategoryUpdate,
+        'modal-delete': ModalDelete,
+        'modal-category-create': ModalCategoryCreate
     },
     data() {
         return {
             noteId: this.$route.params.id,
-            showModalColor: false,
             classesColor: ['red', 'blue', 'gray'],
-            note: {}
+            modals: {
+                modalText: false,
+                modalImage: false,
+                modalAudio: false,
+                modalColor: false,
+                modalCategory: false,
+                modalDelete: false,
+                modalCategoryCreate: false
+            },
+            windowHeight: window.innerHeight
         }
     },
     async beforeRouteEnter (to, from, next) {
         let note = await db.collection('notes').doc(to.params.id).get();
+        let noteTemp = { noteId: note.id, ...note.data() };
         next(vm => {
-            vm.note = note.data();
+            vm.$store.dispatch('notes/setNoteUpdate', noteTemp);
         });
     },
+    // mounted() {
+    //     this.$store.dispatch('category/updatedSelectedCategory', {
+    //         newCategory: this.note.selectedCategory
+    //     });
+    // },
+    mounted() {
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+        });
+    },
+    updated() {
+        console.log(this.note.content, "update");
+
+    },
+    beforeDestroy() { 
+        window.removeEventListener('resize', this.onResize); 
+    },
     methods: {
+        setSelectedCategoryName(name) {
+            this.note.selectedCategory = name;
+        },
+        onResize() {
+            this.windowHeight = window.innerHeight
+        },
         async updateNote(noteId, note) {
             note.noteId = noteId;
-            this.$store.dispatch('updateNoteFromFirebase', {noteId, note});
+            this.$store.dispatch('notes/updateNoteFromFirebase', {noteId, note});
+            this.$toast.success('Nota actualizada');
             this.$router.push({name: 'Home'});
-        }
+        },
+        selectedModal(modal) {
+            this.modals[modal] = true;
+        },
+        // msToTime(duration) {
+        //     var milliseconds = Math.floor((duration % 1000) / 100),
+        //         seconds = Math.floor((duration / 1000) % 60),
+        //         minutes = Math.floor((duration / (1000 * 60)) % 60),
+        //         hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+        //     hours = (hours < 10) ? "0" + hours : hours;
+        //     minutes = (minutes < 10) ? "0" + minutes : minutes;
+        //     seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+        //     return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+        // }
     },
     computed: {
         editor() {
-            return this.$store.getters.getEditor;
+            return this.$store.getters['notes/getEditor'];
+        },
+
+        selectedCategory() {
+            return this.$store.getters['category/getSelectedCategory'];
+        },
+        note() {
+            return this.$store.getters['notes/getNoteUpdate'];
+        },
+        // date() {
+        //     let date = new Date(this.note.createdAt);
+        //     return date.toLocaleDateString();
+        // },
+        // createdAtNote() {
+        //     return this.msToTime(this.note.createdAt);
+        // },
+        categories() {
+            return this.$store.getters['category/categories'];
         }
     }
 }
@@ -106,14 +146,5 @@ export default {
         position: absolute;
         color: gray;
         background-color: transparent;
-    }
-    .blue {
-        @apply bg-blue-300;
-    }
-    .red {
-        @apply bg-red-400;
-    }
-    .gray {
-        @apply bg-gray-500;
     }
 </style>

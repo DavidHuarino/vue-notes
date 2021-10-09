@@ -1,6 +1,7 @@
 <template>
   <div>
       {{content}}
+      <audio src="http://osvaldas.info/examples/audio-player-responsive-and-touch-friendly/audio.mp3" controls></audio>
     <p
       v-for="(value, index) in content"
       :id="`content-${index}`"

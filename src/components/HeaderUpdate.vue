@@ -14,38 +14,22 @@
         </button>
     </div>
 </template>
-
 <script>
 export default {
-    name: 'Header',
+    name: 'HeaderUpdate',
     props: {
         editor: {
             type: Object
-        },
-        directoryName: {
-            type: String
         }
     },
     methods: {
-        async backMenu() {
-            try {
-                await this.$store.dispatch('images/removeItemsByDirectoryName', {
-                    directoryName: this.directoryName
-                });
-                this.$store.dispatch('notes/getWordToSearch', {
-                    searchWord: ''
-                });
-                this.$toast.success('Nota removida');
-                this.$router.push({name: 'Home'});
-            } catch (error) {
-                console.error(error.message);
-            }
+        backMenu() {
+            this.$router.push({name: 'Home'});
+            console.log("wadafa")
+            this.$store.dispatch('notes/getWordToSearch', {
+                searchWord: ''
+            });
         }
     },
 }
 </script>
-<style>
-    button:focus {
-        outline: none;
-    }
-</style>

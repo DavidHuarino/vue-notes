@@ -7,12 +7,30 @@
   <div class="w-full min-h-screen px-5 bg-gray-300 text-center">
     
     <button class="p-3 bg-blue-600 text-white" @click="logOut()">Log Out</button>
-    <h1 class="text-2xl p-3">Notes</h1>
+    <h1 class="text-2xl p-3">{{categoryTitle}}</h1>
+    <!-- <div>
+      wadafas
+    </div> -->
+    <p>{{ this.$store.getters['notes/getSearchWord'] }}</p>
     <search-note />
-    <notes-list />
+    <!-- <list-category-filter class="" :categories="categories" /> -->
+    <section class="mb-2 flex">
+      <button class="focus:outline-none w-full" @click="setCurrentListValue('notes')">Notas</button>
+      <button class="focus:outline-none w-full" @click="setCurrentListValue('todos')">Tareas</button>
+    </section>
+    <component :is="selectedList" :currentProperties="currentProperties" />
+    <!-- <notes-list :notes="notes" /> -->
+    <!-- <todos-list /> -->
     <!--
     <a class="fixed bottom-5 right-5 bg-blue-400 w-14 h-14 rounded-full"></a>-->
-    <router-link class="fixed bottom-5 right-5 bg-blue-400 w-14 h-14 rounded-full" :to="{name: 'createNote'}"><font-awesome-icon class="mt-4 text-2xl text-white" :icon="['fas', 'plus']"/></router-link>
+    <!-- <router-link class="fixed bottom-5 right-5 bg-blue-400 w-14 h-14 rounded-full" :to="{name: 'createNote'}"><font-awesome-icon class="mt-4 text-2xl text-white" :icon="['fas', 'plus']"/></router-link> -->
+    <footer-home @open-modal-category="modalCategory=true" @filter-favorite-note="categoryTitle='Favorite'" @open-modal-pick="modalPick=true" />
+    <modal-category-home v-show="modalCategory" @close-modal-category="modalCategory=false" :categories="categories" @emit-category-name="getCategoryName" @category-name-id="getObjectCategory" @open-modal-category-create="modalCategoryCreate=true" @emit-category-all="categoryTitle='vueNotes'" />
+    <!-- <modal-delete v-show="modalDelete" @close-modal-delete="modalDelete=false" /> -->
+    <modal-category-home-delete v-show="modalCategoryDelete" />
+    <modal-category-home-edit v-show="modalCategoryEdit" @close-modal="modalCategoryEdit=false" :categoryNameEdit.sync="categoryNameEdit" :categoryIdEdit.sync="categoryIdEdit" :categoryNameEditTemp="categoryNameEditTemp" />
+    <modal-category-home-create v-show="modalCategoryCreate" @close-modal="modalCategoryCreate=false" />
+    <modal-pick-editor v-show="modalPick" @close-modal-pick="modalPick=false" />
   </div>
 </template>
 
@@ -21,21 +39,76 @@
 //import HelloWorld from '@/components/HelloWorld.vue'
 import SearchNote from '../components/SearchNote.vue'
 import ListNotes from '../components/ListNotes.vue'
+// import ListCategoryToFilter from '../components/ListCategoryToFilter.vue'
+import FooterHome from '../components/FooterHome.vue'
+import ModalCategoryHome from '../components/ModalCategoryHome.vue'
+// import ModalDelete from '../components/ModalDelete.vue'
+import ModalCategoryHomeDelete from '../components/ModalCategoryHomeDelete.vue';
+import ModalCategoryHomeEdit from '../components/ModalCategoryHomeEdit.vue';
+import ModalCategoryHomeCreate from '../components/ModalCategoryHomeCreate.vue';
+import ModalPick from '../components/ModalPick.vue';
+import ListTodos from '../components/ListTodos.vue'
 export default {
   name: 'Home',
   components: {
     'search-note': SearchNote,
-    'notes-list': ListNotes
+    'notes-list': ListNotes,
+    // 'list-category-filter': ListCategoryToFilter,
+    'footer-home': FooterHome,
+    'modal-category-home': ModalCategoryHome,
+    'modal-category-home-delete': ModalCategoryHomeDelete,
+    'modal-category-home-edit': ModalCategoryHomeEdit,
+    'modal-category-home-create': ModalCategoryHomeCreate,
+    'modal-pick-editor': ModalPick,
+    'todos-list': ListTodos
   },
   data() {
     return {
-
+      modalCategory: false,
+      selectedCategoryName: null,
+      modalCategoryDelete: false,
+      modalCategoryEdit: false,
+      modalCategoryCreate: false,
+      modalPick: false,
+      categoryNameEdit: '',
+      categoryIdEdit: '',
+      categoryNameEditTemp: '',
+      categoryTitle: 'vueNotes',
+      // currentList: 'notes'
     }
   },
   created() {
     this.getNotes();
+    this.getCategories();
+    this.getTodos();
   },
   methods: {
+    setCurrentListValue(value) {
+      this.$store.dispatch('todos/setCurrentListValue', {
+        value
+      });
+    },
+    getObjectCategory(object) {
+      this.modalCategoryEdit = true;
+      console.log('click', object, object.categoryName);
+      this.categoryNameEdit = object.categoryName;
+      this.categoryIdEdit = object.categoryId;
+      this.categoryNameEditTemp = object.categoryName;
+    },
+    getCategoryName(name) {
+      this.selectedCategoryName = name;
+      this.categoryTitle = name;
+      this.$store.dispatch('notes/getCategoryToFilterNotes', {
+        categoryName: name
+      });
+    },
+    async getTodos() {
+      try {
+        this.$store.dispatch('todos/getTodosById');
+      } catch (error) {
+        console.error(error.message);
+      }
+    },
     async getNotes() {
       try {
         this.$store.dispatch('notes/getNotesById');
@@ -51,11 +124,39 @@ export default {
       } catch (error) {
         console.error(error.message);
       }
+    },
+    getCategories() {
+      try {
+        this.$store.dispatch('category/getCategories');
+      } catch (error) {
+        console.error(error.message);
+      }
     }
   },
   computed: {
+    currentProperties() {
+      if (this.selectedList === 'notes-list') {
+        return this.notes;
+      }
+      return this.todos;
+    },
+    selectedList() {
+      return `${this.currentList}-list`;
+    },
     currentUser() {
       return this.$store.getters.getUser;
+    },
+    categories() {
+      return this.$store.getters['category/categories'];
+    },
+    notes() {
+      return this.$store.getters['notes/getFilteredNotes'];
+    },
+    todos() {
+      return this.$store.getters['todos/todos'];
+    },
+    currentList() {
+      return this.$store.getters['todos/getCurrentList'];
     }
   }
   //components: {
