@@ -27,6 +27,10 @@ export default {
         title: {
             type: String,
             required: true
+        },
+        favoriteTodo: {
+            type: Boolean,
+            required: true
         }
     },
     methods: {
@@ -41,7 +45,8 @@ export default {
                 todos: this.todos,
                 categoryName: this.categoryName,
                 createdAt: this.createdAt,
-                title: this.title
+                title: this.title,
+                favoriteTodo: this.favoriteTodo
             });
             this.$toast.success('Tarea creada');
             this.$store.dispatch('todos/setCurrentListValue', {

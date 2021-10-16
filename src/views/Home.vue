@@ -12,11 +12,12 @@
       wadafas
     </div> -->
     <p>{{ this.$store.getters['notes/getSearchWord'] }}</p>
-    <search-note />
+    <search-note v-if="currentList === 'notes'" />
+    <search-todo v-if="currentList === 'todos'" />
     <!-- <list-category-filter class="" :categories="categories" /> -->
     <section class="mb-2 flex">
-      <button class="focus:outline-none w-full" @click="setCurrentListValue('notes')">Notas</button>
-      <button class="focus:outline-none w-full" @click="setCurrentListValue('todos')">Tareas</button>
+      <button class="focus:outline-none w-full pb-1 mx-1" :class="{'border-b-2 border-gray-600': currentList === 'notes'}" @click="setCurrentListValue('notes')">Notas</button>
+      <button class="focus:outline-none w-full pb-1 mx-1" :class="{'border-b-2 border-gray-600': currentList === 'todos'}" @click="setCurrentListValue('todos')">Tareas</button>
     </section>
     <component :is="selectedList" :currentProperties="currentProperties" />
     <!-- <notes-list :notes="notes" /> -->
@@ -37,11 +38,12 @@
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
-import SearchNote from '../components/SearchNote.vue'
-import ListNotes from '../components/ListNotes.vue'
+import SearchNote from '../components/SearchNote.vue';
+import ListNotes from '../components/ListNotes.vue';
+import SearchTodo from '../components/SearchTodo.vue';
 // import ListCategoryToFilter from '../components/ListCategoryToFilter.vue'
-import FooterHome from '../components/FooterHome.vue'
-import ModalCategoryHome from '../components/ModalCategoryHome.vue'
+import FooterHome from '../components/FooterHome.vue';
+import ModalCategoryHome from '../components/ModalCategoryHome.vue';
 // import ModalDelete from '../components/ModalDelete.vue'
 import ModalCategoryHomeDelete from '../components/ModalCategoryHomeDelete.vue';
 import ModalCategoryHomeEdit from '../components/ModalCategoryHomeEdit.vue';
@@ -52,6 +54,7 @@ export default {
   name: 'Home',
   components: {
     'search-note': SearchNote,
+    'search-todo': SearchTodo,
     'notes-list': ListNotes,
     // 'list-category-filter': ListCategoryToFilter,
     'footer-home': FooterHome,
@@ -84,6 +87,9 @@ export default {
   },
   methods: {
     setCurrentListValue(value) {
+      // if (value === 'notes') {
+      //   this.$store.dispatch('notes/cleanSearchWord');
+      // }
       this.$store.dispatch('todos/setCurrentListValue', {
         value
       });
@@ -137,8 +143,9 @@ export default {
     currentProperties() {
       if (this.selectedList === 'notes-list') {
         return this.notes;
+      } else {
+        return this.todos;
       }
-      return this.todos;
     },
     selectedList() {
       return `${this.currentList}-list`;
@@ -153,7 +160,7 @@ export default {
       return this.$store.getters['notes/getFilteredNotes'];
     },
     todos() {
-      return this.$store.getters['todos/todos'];
+      return this.$store.getters['todos/getFilteredTodos'];
     },
     currentList() {
       return this.$store.getters['todos/getCurrentList'];

@@ -1,12 +1,12 @@
 <template>
     <div class="pl-3 pb-3 pt-3 bg-gray-300">
-        <header-todo :todos="todos" :categoryName="selectedCategoryName" :createdAt="getCurrentTime" :title="title" />
+        <header-todo :todos="todos" :categoryName="selectedCategoryName" :createdAt="getCurrentTime" :title="title" :favoriteTodo="favoriteTodo" />
         <div class="flex justify-between mt-2">
             <p class="text-base text-gray-500 font-medium">{{getCurrentTime}}</p>
             <button class="bg-white rounded-full py-px px-1 text-sm tracking-wider font-medium focus:outline-none w-1/4 truncate mr-3" @click="modalCategory='true'">{{selectedCategoryName}}</button>
         </div>
         <input type="text" v-model="title" placeholder="Titulo" class="w-full text-xl focus:outline-none py-3 bg-gray-300">
-        <section v-if="todos.lenght > 0" class="overflow-y-auto" :style="{'height': `calc(${windowHeight}px - 170px)`}">
+        <section v-if="todos.length > 0" class="overflow-y-auto" :style="{'height': `calc(${windowHeight}px - 170px)`}">
             <div class="flex justify-between mb-2" v-for="(todo, index) in todos" :key="index">
                 <div class="flex space-x-2 mx-2">
                     <input type="checkbox" v-model="todo.completed">
@@ -21,13 +21,22 @@
         <section v-else class="overflow-y-auto text-center" :style="{'height': `calc(${windowHeight}px - 170px)`}">
             No hay tareas
         </section>
-        <div class="inset-x-0 bottom-0 fixed bg-gray-400 text-center"> 
-            <button class="p-2 w-full focus:outline-none" @click="modalCreate='true'">
-                <font-awesome-icon class="text-black text-xl" :icon="['fas', 'plus']"/>
+        <div class="inset-x-0 bottom-0 fixed bg-gray-400 text-center flex px-7">
+            <button class="p-2 focus:outline-none flex-grow-0" @click="favoriteTodo=!favoriteTodo">
+                <font-awesome-icon class="text-black text-xl" :icon="['fas', 'star']" :class="{'text-yellow-400': favoriteTodo}" />
             </button>
+            <button class="p-2 focus:outline-none flex-grow" @click="modalCreate='true'">
+                <font-awesome-icon class="text-black text-xl" :icon="['fas', 'plus']" />
+            </button>
+            <button class="p-2 focus:outline-none flex-grow-0" @click="backMenu()">
+                <font-awesome-icon class="text-black text-xl" :icon="['fas', 'trash']"/>
+            </button>
+            <!-- <button class="p-2 w-full focus:outline-none" @click="modalCreate='true'">
+                <font-awesome-icon class="text-black text-xl" :icon="['fas', 'plus']"/>
+            </button> -->
         </div>
         <modal-todo-create v-show="modalCreate" @close-modal-todo="modalCreate=false" @get-todo="addTodo" class="z-3" />
-        <modal-todo-update v-if="modalUpdate" @close-modal="modalUpdate=false" class="z-4" :todoContentEdit.sync="todos[indexUpdate].content" />
+        <modal-todo-update v-if="modalUpdate" @close-modal="modalUpdate=false" class="z-3" :todoContentEdit.sync="todos[indexUpdate].content" />
         <modal-category-create v-show="modalCategory" @close-modal="modalCategory=false" :categories="categories" @selected-category-name="getCategoryName" />
     </div>
 </template>
@@ -58,7 +67,8 @@ export default {
             todoId: uuid.v1(),
             windowHeight: window.innerHeight,
             //todoContentEdit: '',
-            indexUpdate: null
+            indexUpdate: null,
+            favoriteTodo: false
         }
     },
     created() {
@@ -75,6 +85,9 @@ export default {
         window.removeEventListener('resize', this.onResize); 
     },
     methods: {
+        backMenu() {
+            this.$router.push({ name: 'Home' });
+        },
         updateTodo(value) {
             this.modalUpdate = true;
             this.indexUpdate = value;

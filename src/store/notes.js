@@ -30,9 +30,15 @@ const mutations = {
     },
     SET_FAVORITE_NOTES(state, notes) {
         state.notesFilteredByCategory = notes;
+    },
+    CLEAN_SEARCH_WORD(state, word) {
+        state.searchWord = word;
     }
 };
 const actions = {
+    cleanSearchWord({ commit }) {
+        commit('CLEAN_SEARCH_WORD', '');
+    },
     setNoteUpdate({ commit }, note) {
         commit('SET_NOTE_UPDATE', note);
     },
@@ -117,8 +123,6 @@ const actions = {
     },
     getCategoryToFilterNotes({ commit, getters }, { categoryName }) {
         commit('SET_FILTERED_NOTE', getters.getNotesByCategoryName(categoryName));
-        // state.searchWord = '';
-        //commit('SET_NULL_SEARCH_WORD', '');
     },
     setAllNotesToFilteredNotes({ commit, getters }) {
         commit('SET_NOTES_TO_FILTEREDNOTES', getters.getAllNotes);

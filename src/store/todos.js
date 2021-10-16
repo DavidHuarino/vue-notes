@@ -3,11 +3,13 @@ const state = {
     todos: [],
     currentList: 'notes',
     todo: [],
-    todoById: {}
+    todoById: {},
+    searchWord: '',
+    todosFilteredByCategory: []
 };
 const mutations = {
     SET_TODOS(state, todos) {
-        state.todos = todos;
+        state.todos = state.todosFilteredByCategory = todos;
     },
     SET_VALUE(state, value) {
         state.currentList = value;
@@ -17,9 +19,15 @@ const mutations = {
     },
     SET_PROPERTIES_BY_TODO_ID(state, todoById) {
         state.todoById = todoById
+    },
+    SET_WORD_SEARCH(state, searchWord) {
+        state.searchWord = searchWord;
     }
 };
 const actions = {
+    getWordToSearch({ commit }, { searchWord }) {
+        commit('SET_WORD_SEARCH', searchWord);
+    },
     getTodoById({ commit }, { todoId }) {
         db.collection('todos').where('todoId', '==', todoId).orderBy('createdAt', 'asc').onSnapshot(res => {
             const todosByTodoId = res.docs.map(doc => ({currentTodoId: doc.id, ...doc.data() }));
@@ -36,13 +44,14 @@ const actions = {
           commit('SET_TODOS', todos);
         });
     },
-    async addTodoFirebase(_, { todos, categoryName, createdAt, title }) {
+    async addTodoFirebase(_, { todos, categoryName, createdAt, title, favoriteTodo }) {
         const user = auth.currentUser;
         const newTodoCreated = await db.collection('userTodo').add({
             categoryName,
             createdAt,
             title,
-            userId: user.uid
+            userId: user.uid,
+            favoriteTodo
         });
         const todoId = newTodoCreated.id;
         todos.forEach(async element => {
@@ -56,13 +65,55 @@ const actions = {
     },
     async getPropertiesById({ commit }, { todoId }) {
         const todoPropertiesById = await db.collection('userTodo').doc(todoId).get();
-        commit('SET_PROPERTIES_BY_TODO_ID', todoPropertiesById.data());
+        commit('SET_PROPERTIES_BY_TODO_ID', { todoId, ...todoPropertiesById.data() });
     },
-    // async updateTodoFirebase(_, { todos }) {
-    //     todos.forEach(async element => {
-    //         await db.collection('todos').doc().update();
-    //     });
-    // }
+    async updateTodoFirebase(_, { featuresTodo, removeTodos, newTodos, updateTodos }) {
+        try {
+            await db.collection('userTodo').doc(featuresTodo.todoId).update({
+                categoryName: featuresTodo.categoryName,
+                title: featuresTodo.title,
+                favoriteTodo: featuresTodo.favoriteTodo
+            });
+            removeTodos.forEach(async element => {
+                await db.collection('todos').doc(element).delete();
+            });
+            newTodos.forEach(async element => {
+                await db.collection('todos').add({
+                    completed: element.completed,
+                    content: element.content,
+                    todoId: featuresTodo.todoId,
+                    createdAt: element.createdAt
+                });
+            });
+            updateTodos.forEach(async element => {
+                await db.collection('todos').doc(element.currentTodoId).update({
+                    completed: element.completed,
+                    content: element.content
+                });
+            });
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
+    async removeTodosById(_, { todoId, todos }) {
+        try {
+            await db.collection('userTodo').doc(todoId).delete();
+            todos.forEach(async item => {
+                await db.collection('todos').doc(item.currentTodoId).delete();
+            });
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
+    async updateFavoriteTodoById(_, { todoId, favoriteTodo }) {
+        try {
+            await db.collection('userTodo').doc(todoId).update({
+                favoriteTodo: !favoriteTodo
+            });
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
 };
 const getters = {
     todos(state) {
@@ -74,8 +125,17 @@ const getters = {
     getTodo(state) {
         return state.todo;
     },
+    getFilteredTodos(state) {
+        if (state.searchWord !== '') {
+            return state.todosFilteredByCategory.filter(object => object.title.toLowerCase().includes(state.searchWord));
+        }
+        return state.todosFilteredByCategory;
+    },
     getPropertiesById(state) {
         return state.todoById
+    },
+    getSearchWord(state) {
+        return state.searchWord;
     }
 };
 export default {

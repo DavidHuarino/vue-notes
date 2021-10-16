@@ -2,7 +2,7 @@
     <div class="square-container">
         <div v-for="objectTodo in currentProperties" :key="objectTodo.noteId" class="square rounded-lg bg-gray-400">
             <div class="content p-2">
-                <!-- <button class="absolute left-0 top-0 ml-1 focus:outline-none p-1" @click.stop="updateFavoriteNote(objectNote.noteId, objectNote.favoriteNote)"><font-awesome-icon class="text-base text-black" :class="{'background-text-favorite-note': objectNote.favoriteNote}" :icon="['fas', 'star']"/></button> -->
+                <button class="absolute left-0 top-0 ml-1 focus:outline-none p-1" @click.stop="updateFavoriteTodo(objectTodo.todoId, objectTodo.favoriteTodo)"><font-awesome-icon class="text-base text-black" :class="{'text-yellow-400': objectTodo.favoriteTodo}" :icon="['fas', 'star']"/></button>
                 <router-link :to="{name: 'updateTodo', params: {id: objectTodo.todoId}}" class="w-full h-full flex items-center justify-center">
                     <h2 v-if="objectTodo.title.length > 0" class="truncate">{{objectTodo.title}}</h2>
                     <h2 v-else>Sin titulo</h2>
@@ -23,6 +23,14 @@ export default {
         currentProperties: {
             type: Array,
             required: true
+        }
+    },
+    methods: {
+        async updateFavoriteTodo(todoId, favoriteTodo) {
+            await this.$store.dispatch('todos/updateFavoriteTodoById', {
+                todoId,
+                favoriteTodo
+            });
         }
     },
     computed: {

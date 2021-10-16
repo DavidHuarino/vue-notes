@@ -3,7 +3,7 @@
         <button @click="backMenu()" class="focus:outline-none focus:shadow-outline">
             <font-awesome-icon class="text-black text-xl" :icon="['fas', 'arrow-left']"/>
         </button>
-        <button type="submit" class="focus:outline-none focus:shadow-outline" @click="updateTodos()">
+        <button type="submit" class="focus:outline-none focus:shadow-outline" @click="updateTodo()">
             <font-awesome-icon class="text-black text-xl" :icon="['fas', 'check']"/>
         </button>
     </div>
@@ -12,34 +12,36 @@
 export default {
     name: 'HeaderTodoUpdate',
     props: {
-        todos: {
+        updateTodos: {
             type: Array,
             required: true
         },
-        // categoryName: {
-        //     type: String,
-        //     required: true
-        // },
-        // createdAt: {
-        //     type: String,
-        //     required: true
-        // },
-        // title: {
-        //     type: String,
-        //     required: true
-        // }
-    },
-    created() {
-        console.log(this.todos, "waafa");
+        newTodos: {
+            type: Array,
+            required: true
+        },
+        removeTodos: {
+            type: Array,
+            required: true
+        },
+        featuresTodo: {
+            type: Object,
+            required: true
+        }
     },
     methods: {
         backMenu() {
             this.$router.push({ name: 'Home' });
         },
         async updateTodo() {
-            await this.$store.dispatch('updateTodoFirebase', {
-                todos: this.todos
+            await this.$store.dispatch('todos/updateTodoFirebase', {
+                featuresTodo: this.featuresTodo,
+                removeTodos: this.removeTodos,
+                newTodos: this.newTodos,
+                updateTodos: this.updateTodos
             });
+            this.$toast.success('Tarea actualizada');
+            this.backMenu();
         }
     },
 }
