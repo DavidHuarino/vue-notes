@@ -22,6 +22,15 @@ const mutations = {
     },
     SET_WORD_SEARCH(state, searchWord) {
         state.searchWord = searchWord;
+    },
+    SET_FAVORITE_TODOS(state, todos) {
+        state.todosFilteredByCategory = todos;
+    },
+    SET_TODOS_TO_FILTEREDTODOS(state, todos) {
+        state.todosFilteredByCategory = todos;
+    },
+    SET_FILTERED_TODO(state, todos) {
+        state.todosFilteredByCategory = todos;
     }
 };
 const actions = {
@@ -113,9 +122,30 @@ const actions = {
         } catch (error) {
             console.error(error.message);
         }
-    }
+    },
+    setFavoriteTodos({ commit, getters }) {
+        commit('SET_FAVORITE_TODOS', getters.getFavoriteTodos);
+    },
+    setAllTodosToFilteredTodos({ commit, getters }) {
+        commit('SET_TODOS_TO_FILTEREDTODOS', getters.getAllTodos);
+    },
+    getCategoryToFilterTodos({ commit, getters }, { categoryName }) {
+        commit('SET_FILTERED_TODO', getters.getTodosByCategoryName(categoryName));
+    },
 };
 const getters = {
+    countTodosByCategory: (state) => categoryName => {
+        return state.todos.filter(object => object.categoryName === categoryName).length;
+    },
+    getTodosByCategoryName: (state) => categoryName => {
+        return state.todos.filter(object => object.categoryName === categoryName);
+    },
+    getAllTodos(state) {
+        return state.todos;
+    },
+    getFavoriteTodos(state) {
+        return state.todos.filter(object => object.favoriteTodo === true);
+    },
     todos(state) {
         return state.todos;
     },

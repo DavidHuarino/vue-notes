@@ -21,6 +21,7 @@ export default {
         getFavoriteNotes() {
             this.$emit('filter-favorite-note');
             this.$store.dispatch('notes/setFavoriteNotes');
+            this.$store.dispatch('todos/setFavoriteTodos');
         }
     },
 }

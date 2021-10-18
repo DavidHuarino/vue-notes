@@ -1,7 +1,7 @@
 <template>
     <transition name="fade" mode="out-in" appear>
         <div class="bg-black inset-0 bg-opacity-50 flex justify-center items-center absolute p-3">
-            <button @click="closeModal()"><font-awesome-icon class="text-white text-2xl top-6 right-5 absolute" :icon="['fas', 'times-circle']"/></button>
+            <button @click="closeModal()"><font-awesome-icon class="text-white text-3xl top-12 right-5 absolute" :icon="['fas', 'times-circle']"/></button>
             <div class="bg-gray-200 relative rounded-lg text-center w-44 pb-3 px-1">
                 <!-- <button @click="closeModal()"><font-awesome-icon class="text-black text-2xl top-2 right-2 absolute" :icon="['fas', 'times-circle']"/></button> -->
                 <!-- <h2 class="text-xl mb-2 text-center">Pick </h2> -->

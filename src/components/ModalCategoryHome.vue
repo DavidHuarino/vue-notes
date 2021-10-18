@@ -51,6 +51,7 @@ export default {
     methods: {
         getAllNotes() {
             this.$store.dispatch('notes/setAllNotesToFilteredNotes');
+            this.$store.dispatch('todos/setAllTodosToFilteredTodos');
             this.$emit('emit-category-all');
             this.closeModal();
         },
@@ -70,8 +71,9 @@ export default {
         },
         async countNotesByCategory(name, categoryId) {
             let countNotes = this.$store.getters['notes/countNotesByCategory'](name);
+            let countTodos = this.$store.getters['todos/countTodosByCategory'](name);
             console.log(countNotes, "count", categoryId);
-            if (countNotes > 0) {
+            if (countNotes + countTodos > 0) {
                 this.$toast.info('Esta categoría aun tiene notas');
                 return 
             }

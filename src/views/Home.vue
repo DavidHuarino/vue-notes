@@ -4,14 +4,15 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>-->
-  <div class="w-full min-h-screen px-5 bg-gray-300 text-center">
-    
-    <button class="p-3 bg-blue-600 text-white" @click="logOut()">Log Out</button>
+  <div class="w-full min-h-screen px-5 bg-gray-300 text-center pt-3">
+    <div class="flex justify-end">
+      <button class="py-2 px-3 bg-blue-600 text-white rounded-md" @click="logOut()">Log Out</button>
+    </div>
     <h1 class="text-2xl p-3">{{categoryTitle}}</h1>
     <!-- <div>
       wadafas
     </div> -->
-    <p>{{ this.$store.getters['notes/getSearchWord'] }}</p>
+    <!-- <p>{{ this.$store.getters['notes/getSearchWord'] }}</p> -->
     <search-note v-if="currentList === 'notes'" />
     <search-todo v-if="currentList === 'todos'" />
     <!-- <list-category-filter class="" :categories="categories" /> -->
@@ -105,6 +106,9 @@ export default {
       this.selectedCategoryName = name;
       this.categoryTitle = name;
       this.$store.dispatch('notes/getCategoryToFilterNotes', {
+        categoryName: name
+      });
+      this.$store.dispatch('todos/getCategoryToFilterTodos', {
         categoryName: name
       });
     },

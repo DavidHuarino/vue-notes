@@ -3,9 +3,9 @@
         <button @click="openModal('modalText')">
             <font-awesome-icon class="text-black text-xl" :icon="['fas', 'font']"/>
         </button>
-        <button @click="editor.chain().focus().toggleTaskList().run()" :class="{ 'is-active': editor.isActive('taskList') }" v-if="editor">
+        <!-- <button @click="editor.chain().focus().toggleTaskList().run()" :class="{ 'is-active': editor.isActive('taskList') }" v-if="editor">
             <font-awesome-icon class="text-black text-xl" :icon="['fas', 'tasks']"/>
-        </button>
+        </button> -->
         <label for="imageUpload"><font-awesome-icon class="text-black text-xl" :icon="['fas', 'image']"/></label>
         <input type="file" id="imageUpload" accept="image/*" @change="uploadImage" class="hidden">
         <!-- <button @click="openModal('modalAudio')">

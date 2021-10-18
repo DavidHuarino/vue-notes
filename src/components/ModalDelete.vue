@@ -30,7 +30,7 @@ export default {
             this.closeModal();
             if (Object.entries(this.objectNote).length === 0) {
                 this.$router.push({ name: 'Home' });
-                this.$toast.success('Nota Removida');
+                // this.$toast.success('Nota Removida');
                 this.$store.dispatch('notes/getWordToSearch', {
                     searchWord: ''
                 });
