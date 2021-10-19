@@ -4,12 +4,12 @@
             <div class="bg-gray-200 w-full relative h-4/5 rounded-lg text-left">
                 <button @click="closeModal()"><font-awesome-icon class="text-black text-2xl top-2 right-2 absolute" :icon="['fas', 'times-circle']"/></button>
                 <h2 class="text-xl mb-2 text-center">Categoría</h2>
-                <section class="px-3 py-1" v-if="categories.length > 0">
+                <section class="px-3 py-1 overflow-y-auto" v-if="categories.length > 0" :style="{'height': `calc(${windowHeight}px - 260px)`}">
                     <div class="my-2 p-1 flex border-b-2 border-blue-400">
                         <div @click="getAllNotes()" class="w-full cursor-pointer">Todas</div>
                     </div>
                     <div v-for="(category, index) in categories" :key="index" class="my-2 p-1 flex border-b-2 border-blue-400">
-                        <div @click="sendCategoryName(category.name)" class="w-full cursor-pointer">{{category.name}}</div>
+                        <div @click="sendCategoryName(category.name)" class="w-full cursor-pointer truncate pr-3">{{category.name}}</div>
                         <div class="flex space-x-4">
                             <button class="focus:outline-none" @click="getCategoryNameEdit(category.name, category.categoryId)"><font-awesome-icon class="text-xl text-black" :icon="['fas', 'pencil-alt']"/></button>
                             <button class="focus:outline-none" @click="countNotesByCategory(category.name, category.categoryId)"><font-awesome-icon class="text-xl text-black" :icon="['fas', 'trash-alt']"/></button>
@@ -44,9 +44,16 @@ export default {
     },
     data() {
         return {
-            //modalCategoryEdit: false,
-            // categoryNameEdit: ''
+            windowHeight: window.innerHeight,
         }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+        });
+    },
+    beforeDestroy() { 
+        window.removeEventListener('resize', this.onResize); 
     },
     methods: {
         getAllNotes() {

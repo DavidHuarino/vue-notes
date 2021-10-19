@@ -20,7 +20,9 @@
       <button class="focus:outline-none w-full pb-1 mx-1" :class="{'border-b-2 border-gray-600': currentList === 'notes'}" @click="setCurrentListValue('notes')">Notas</button>
       <button class="focus:outline-none w-full pb-1 mx-1" :class="{'border-b-2 border-gray-600': currentList === 'todos'}" @click="setCurrentListValue('todos')">Tareas</button>
     </section>
-    <component :is="selectedList" :currentProperties="currentProperties" />
+    <section class="overflow-y-auto px-2" :style="{'height': `calc(${windowHeight}px - 260px)`}">
+      <component :is="selectedList" :currentProperties="currentProperties" />
+    </section>
     <!-- <notes-list :notes="notes" /> -->
     <!-- <todos-list /> -->
     <!--
@@ -78,8 +80,16 @@ export default {
       categoryIdEdit: '',
       categoryNameEditTemp: '',
       categoryTitle: 'vueNotes',
-      // currentList: 'notes'
+      windowHeight: window.innerHeight,
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize);
+    });
+  },
+  beforeDestroy() { 
+    window.removeEventListener('resize', this.onResize); 
   },
   created() {
     this.getNotes();

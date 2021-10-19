@@ -179,6 +179,10 @@ export default {
             this.windowHeight = window.innerHeight
         },
         selectedModal(modal) {
+            if (modal === 'modalDelete') {
+                this.$router.push({ name: 'Home' });
+                return 
+            }
             this.modals[modal] = true;
         },
         async getPrevDirectoryName() {

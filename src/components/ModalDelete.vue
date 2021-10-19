@@ -20,7 +20,7 @@ export default {
         objectNote: {
             type: Object,
             required: true
-        }
+        },
     },
     methods: {
         closeModal() {
@@ -30,8 +30,10 @@ export default {
             this.closeModal();
             if (Object.entries(this.objectNote).length === 0) {
                 this.$router.push({ name: 'Home' });
-                // this.$toast.success('Nota Removida');
                 this.$store.dispatch('notes/getWordToSearch', {
+                    searchWord: ''
+                });
+                this.$store.dispatch('todos/getWordToSearch', {
                     searchWord: ''
                 });
                 return
@@ -44,6 +46,9 @@ export default {
                 this.$toast.success('Nota removida');
                 this.$router.push({name: 'Home'});
                 this.$store.dispatch('notes/getWordToSearch', {
+                    searchWord: ''
+                });
+                this.$store.dispatch('todos/getWordToSearch', {
                     searchWord: ''
                 });
             } catch (error) {

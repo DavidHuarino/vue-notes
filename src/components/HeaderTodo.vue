@@ -39,6 +39,7 @@ export default {
         },
         async createTodos() {
             if (this.todos.length === 0) {
+                this.$toast.info('Tareas vacias');
                 return
             }
             await this.$store.dispatch('todos/addTodoFirebase', {

@@ -35,7 +35,6 @@ export default {
                 this.$store.dispatch('notes/getWordToSearch', {
                     searchWord: ''
                 });
-                this.$toast.success('Nota removida');
                 this.$router.push({name: 'Home'});
             } catch (error) {
                 console.error(error.message);
