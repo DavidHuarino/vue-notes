@@ -49,7 +49,9 @@ export default {
                 this.$router.push({name: 'Home'});
                 console.log("entraste a la app");
             } catch (error) {
-                console.error(error.message);
+                this.$toast.error(error.message);
+                console.error(error.message, "wadafa");
+                console.log(error.message, "wadafa")
             }
         }
     },

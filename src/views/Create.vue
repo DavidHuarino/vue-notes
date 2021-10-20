@@ -218,6 +218,10 @@ export default {
             });
         },
         async createNote() {
+            if (this.title.length === 0) {
+                this.$toast.info('Agregue un titulo por favor');
+                return 
+            }
             this.noteIdUrl = this.$uuid.v4();
             await this.$store.dispatch('notes/addNoteToFirebase', {
                 title: this.title, 

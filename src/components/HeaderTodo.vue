@@ -38,8 +38,8 @@ export default {
             this.$router.push({ name: 'Home' });
         },
         async createTodos() {
-            if (this.todos.length === 0) {
-                this.$toast.info('Tareas vacias');
+            if (this.title.length === 0) {
+                this.$toast.info('Titulo vacio');
                 return
             }
             await this.$store.dispatch('todos/addTodoFirebase', {

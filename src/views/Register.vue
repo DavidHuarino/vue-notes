@@ -23,7 +23,7 @@
                         <span class="p-2 bg-white"><font-awesome-icon :icon="['fas', 'lock']"/></span>
                         <input type="password" v-model="user.confirmPassword" class="w-full p-2 rounded bg-white border border-transparent focus:outline-none" placeholder="Confirm Password">
                     </div>
-                    <input type="submit" value="Register" class="w-full bg-indigo-600 text-white p-2 rounded shadow mb-4 hover:bg-indigo-700">
+                    <button type="submit" :disabled="!checkInputs" class="disabled:opacity-50 w-full bg-indigo-600 text-white p-2 rounded shadow mb-4 hover:bg-indigo-700" :class="{'cursor-not-allowed': !checkInputs}">Registrar</button>
                 </form>
                 <div class="w-full mt-4 p-4 text-sm border-t border-gray-300 text-center">
                     <span class="text-gray-600 text-center">Have an account? <a class="text-blue-400 cursor-pointer" @click="goLogin()">Sign In</a></span>
@@ -50,18 +50,28 @@ export default {
             this.$router.push({name: 'Login'});
         },
         doReset() {
-            this.user.name = this.user.email = this.user.password = this.user.confirmPassword = '';
+            this.user.username = this.user.email = this.user.password = this.user.confirmPassword = '';
         },
         async doRegister() {
+            if (this.user.password !== this.user.confirmPassword) {
+                this.$toast.error('La contraseña no es la misma');
+                return
+            }
             try {
                 await this.$store.dispatch('user/doRegister', {name: this.user.username, email: this.user.email, password: this.user.password});
                 this.doReset();
                 this.goLogin();
                 console.log("has sido registrado");
+                this.$toast.success('Has sido registrado');
             } catch (error) {
                 console.error(error.message);
             }
         }
     },
+    computed: {
+        checkInputs() {
+            return this.user.username !== '' && this.user.email !== '' && this.user.password !== '' && this.user.confirmPassword !== '';
+        }
+    }
 }
 </script>
