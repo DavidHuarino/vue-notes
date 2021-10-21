@@ -39,7 +39,7 @@ export default {
         },
         async createTodos() {
             if (this.title.length === 0) {
-                this.$toast.info('Titulo vacio');
+                this.$toast.info('Agregue un titulo por favor');
                 return
             }
             await this.$store.dispatch('todos/addTodoFirebase', {

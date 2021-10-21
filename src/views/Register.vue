@@ -64,7 +64,9 @@ export default {
                 console.log("has sido registrado");
                 this.$toast.success('Has sido registrado');
             } catch (error) {
-                console.error(error.message);
+                //console.log(error.message, "wadafa");
+                this.$toast.error(error.message);
+                //console.error(error.message);
             }
         }
     },

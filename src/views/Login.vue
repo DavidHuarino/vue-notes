@@ -2,9 +2,7 @@
     <div class="bg-gray-300 flex justify-center items-center h-screen w-full">
         <div class="bg-gray-100 w-full min-h-screen flex flex-col">
             <span class="p-2 bg-gray-100 text-center text-blue-700 text-7xl my-6"><font-awesome-icon :icon="['fas', 'sticky-note']"/></span>
-            <div class="w-1/2 flex items-center hidden md:block my-auto">
-                <img src="../assets/images/login.jpg" alt="">
-            </div>
+            
             <div class="w-full px-8 flex flex-col">
                 <form @submit.prevent="doLogin()" class="w-full space-y-7">
                     <div class="flex items-center">
@@ -47,11 +45,9 @@ export default {
                 await this.$store.dispatch('user/doLogin', {email: this.user.email, password: this.user.password});
                 this.doReset()
                 this.$router.push({name: 'Home'});
-                console.log("entraste a la app");
+                this.$toast.success('Bienvenido');
             } catch (error) {
                 this.$toast.error(error.message);
-                console.error(error.message, "wadafa");
-                console.log(error.message, "wadafa")
             }
         }
     },
