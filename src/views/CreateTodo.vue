@@ -21,7 +21,7 @@
         <section v-else class="overflow-y-auto text-center" :style="{'height': `calc(${windowHeight}px - 170px)`}">
             No hay tareas
         </section>
-        <div class="inset-x-0 bottom-0 fixed bg-gray-400 text-center flex px-7">
+        <div class="inset-x-0 bottom-0 fixed bg-gray-400 text-center flex px-7 sm:w-3/5 sm:max-w-sm sm:m-auto">
             <button class="p-2 focus:outline-none flex-grow-0" @click="favoriteTodo=!favoriteTodo">
                 <font-awesome-icon class="text-black text-xl" :icon="['fas', 'star']" :class="{'text-yellow-400': favoriteTodo}" />
             </button>

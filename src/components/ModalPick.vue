@@ -1,6 +1,6 @@
 <template>
     <transition name="fade" mode="out-in" appear>
-        <div class="bg-black inset-0 bg-opacity-50 flex justify-center items-center absolute p-3">
+        <div class="bg-black inset-0 bg-opacity-50 flex justify-center items-center absolute p-3 sm:w-3/5 sm:max-w-sm sm:m-auto">
             <button @click="closeModal()"><font-awesome-icon class="text-white text-3xl top-12 right-5 absolute" :icon="['fas', 'times-circle']"/></button>
             <div class="bg-gray-200 relative rounded-lg text-center w-44 pb-3 px-1">
                 <!-- <button @click="closeModal()"><font-awesome-icon class="text-black text-2xl top-2 right-2 absolute" :icon="['fas', 'times-circle']"/></button> -->

@@ -1,5 +1,5 @@
 <template>
-    <div class="inset-x-1 bottom-1 fixed bg-white rounded py-3 px-5 flex justify-around">
+    <div class="inset-x-1 bottom-1 fixed bg-white rounded py-3 px-5 flex justify-around sm:w-3/5 sm:max-w-sm sm:m-auto">
         <button @click="openModal('modalText')">
             <font-awesome-icon class="text-black text-xl" :icon="['fas', 'font']"/>
         </button>

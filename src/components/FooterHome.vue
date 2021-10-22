@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white absolute inset-x-0 bottom-0 p-2 flex justify-around md:w-3/5 md:m-auto">
+    <div class="bg-white absolute inset-x-0 bottom-0 p-2 flex justify-around sm:w-3/5 sm:max-w-sm sm:m-auto">
         <button class="focus:outline-none" @click="openModal()"><font-awesome-icon class="text-2xl text-black" :icon="['fas', 'bars']"/></button>
         <button class="bg-blue-400 p-1 rounded-full w-8 h-8 focus:outline-none" @click="GoCreateNoteAndTodo()"><font-awesome-icon class="text-2xl text-white" :icon="['fas', 'plus']"/></button>
         <!-- <router-link class="bg-blue-400 w-14 h-20" :to="{name: 'createNote'}"><font-awesome-icon class="text-2xl text-white" :icon="['fas', 'plus']"/></router-link> -->

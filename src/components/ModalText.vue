@@ -1,6 +1,6 @@
 <template>
     <transition name="fade" mode="out-in" appear>
-        <div class="bg-black inset-0 bg-opacity-50 flex justify-center items-end absolute">
+        <div class="bg-black inset-0 bg-opacity-50 flex justify-center items-end absolute sm:w-3/5 sm:max-w-sm sm:m-auto">
             <div class="bg-gray-200 w-full text-center relative h-60 rounded-t-lg">
                 <button @click="closeModal()"><font-awesome-icon class="text-black text-2xl top-2 right-2 absolute" :icon="['fas', 'times-circle']"/></button>
                 <h2 class="text-xl">Texto De Fondo</h2>

@@ -2,9 +2,6 @@
     <div class="bg-gray-300 flex justify-center items-center h-screen w-full">
         <div class="bg-gray-100 w-full min-h-screen flex flex-col">
             <h1 class="text-3xl text-center font-bold text-blue-700 my-10">Create Account</h1>
-            <div class="w-1/2 flex items-center hidden md:block my-auto">
-                <img src="../assets/images/login.jpg" alt="">
-            </div>
             <div class="w-full px-8 flex flex-col">
                 <form @submit.prevent="doRegister()" class="space-y-7">
                     <div class="flex items-center">
