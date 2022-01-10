@@ -1,4 +1,9 @@
-# note
+# Vue-notes-app
+
+## Demo
+[Live Demo - Firebase](https://vuenote-1ef43.web.app/#/)
+
+## 
 
 ## Screenshots
 
