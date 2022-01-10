@@ -3,9 +3,12 @@
 ## Demo
 [Live Demo - Firebase](https://vuenote-1ef43.web.app/#/)
 
-## Screenshots
-![vuefirstscreenshot](https://user-images.githubusercontent.com/22582753/148720511-2ef86339-f2c7-4d5a-bc93-85c7c164a65b.png)
-![secondnotescreenshot](https://user-images.githubusercontent.com/22582753/148720716-c05b5849-d742-419f-a167-1525489f7fee.png)
+## Built With
+ - [VueJS](https://vuejs.org/)
+ - [VueJs - Vuex](https://vuex.vuejs.org)
+ - [TailwindCss](https://tailwindcss.com)
+ - [TipTap - Editor](https://tiptap.dev)
+ - [Firebase](https://firebase.google.com)
 
 ## Project setup
 ```
