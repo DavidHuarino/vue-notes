@@ -1,4 +1,5 @@
 # Vue-notes-app
+A note application based on Vue 2.
 
 ## Demo
 [Live Demo - Firebase](https://vuenote-1ef43.web.app/#/)
